@@ -36,8 +36,6 @@ header {
   padding: 15px 0;
   z-index: 50;
   text-align: center;
-  /*box-shadow: 0 4px 10px rgba(0, 255, 153, 0.3);*/
-  /*animation: headerGlow 2s ease-in-out infinite;*/
 }
 @keyframes headerGlow {
   0%, 100% { box-shadow: 0 4px 10px rgba(0, 255, 153, 0.3); }
@@ -223,7 +221,7 @@ h2 {
   padding: 20px;
 }
 @keyframes slideIn {
-  from { transform: translateX(-40px); opacity: 0; }
+  from { transform: translateX(0px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 @keyframes typing {
@@ -247,16 +245,16 @@ h2 {
     width: 95%;
     padding: 20px;
   }
-  h2 {
+/*  h2 {
     font-size: 32px;
-  }
+  }*/
   .post-image {
     max-width: 100%;
   }
-  nav a {
+/*  nav a {
     margin: 0 10px;
     font-size: 16px;
-  }
+  }*/
   .search-bar {
     top: 60px;
     width: 80%;
@@ -269,6 +267,14 @@ h2 {
   .hub-container {
     padding: 110px 10px 10px;
   }
+  .screen {
+    max-height: 300px;
+    padding-bottom: 15px; /* Adjusted for mobile */
+  }
+  nav a {
+    margin: 0 10px;
+    font-size: 16px;
+  }
 }
 </style>
 </head>
@@ -277,7 +283,7 @@ h2 {
   <nav>
     <a href="index.html">Home</a>
     <a href="blog.html">Blog</a>
-    <a href="about.html">About</a>
+<!--     <a href="about.html">About</a> -->
   </nav>
 </header>
 
