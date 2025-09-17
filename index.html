@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>r3zon</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=stylesheet" rel="stylesheet">
 <style>
@@ -91,9 +91,9 @@ nav a:hover {
   max-width: 800px;
   padding: 30px;
   position: relative;
-  margin-bottom: 10%;
   z-index: 1;
   animation: bootUp 1.5s ease-out;
+  margin-bottom: 10%;
 }
 @keyframes bootUp {
   from { opacity: 0; transform: translateY(50px); }
@@ -161,12 +161,13 @@ nav a:hover {
 }
 @media (max-width: 768px) {
   .terminal-box {
-    width: 95%;
+    width: 80%;
+
     padding: 20px;
   }
   .countdown {
     margin: 60px auto 5px;
-    font-size: 18px;
+    font-size: 26px;
   }
   .hub-container {
     padding: 10px;
@@ -175,6 +176,10 @@ nav a:hover {
   .screen {
     max-height: 300px;
     padding-bottom: 15px; /* Adjusted for mobile */
+  }
+  nav a {
+    margin: 0 10px;
+    font-size: 16px;
   }
 }
 </style>
@@ -293,7 +298,12 @@ function out(t) {
 function clearScr() { screen.innerHTML = ''; }
 
 const DATA = {
-  profile: "Loading..."
+  profile: "Name: r3zon\nRole: Cybersecurity Specialist\nExpertise: Penetration Testing, Red Team Operations\nProfessional penetration tester specializing in ethical hacking, vulnerability assessment, and red team operations.",
+  experience: "2025 Nov - Present: Pvt. at 11th Military District\n2024 May - 2025 Oct: Penetration Tester at Siam Thanat Hack Co., Ltd. (STH)",
+  ctf: "DEFCON 2025 — 1000 points, 39th place",
+  bugbounty: "IDOR at HackerOne — Reward: $1000",
+  cve: "CVE-2026-00001 — Critical Web Vulnerability",
+  certs: "CRTA (2025), CWES (2025)"
 };
 
 const SECRET_COMMANDS = {
