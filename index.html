@@ -171,7 +171,12 @@ nav a:hover {
   }
   .hub-container {
     padding: 10px;
-    height: calc(100vh - 60px - 5px - 60px); /* Header height (~50px) + countdown bottom margin (5px) + countdown top margin (60px) */
+    margin-top: 0;
+    height: auto;        
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* ให้เนื้อหาขึ้นไปข้างบน */
   }
   .screen {
     max-height: 300px;
@@ -189,7 +194,7 @@ nav a:hover {
   <nav>
     <a href="index.html">Home</a>
     <a href="blog.html">Blog</a>
-<!--     <a href="about.html">About</a> -->
+    <!-- <a href="about.html">About</a> -->
   </nav>
 </header>
 
