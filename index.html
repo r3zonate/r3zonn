@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>r3zon</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=stylesheet" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c1018;
+  --accent: #00ff99;
+  --secondary: #ff00cc;
+  --muted: #a0a8c0;
+  --glow: rgba(0, 255, 153, 0.7);
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  background: var(--bg);
+  font-family: 'Space Mono', monospace;
+  color: var(--muted);
+  overflow: hidden;
+}
+body {
+  background: linear-gradient(135deg, #0c1018, #1c2638);
+  position: relative;
+}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(17, 17, 17, 0.95), rgba(17, 17, 17, 0.85));
+  padding: 15px 0;
+  z-index: 50;
+  text-align: center;
+}
+@keyframes headerGlow {
+  0%, 100% { box-shadow: 0 4px 10px rgba(0, 255, 153, 0.3); }
+  50% { box-shadow: 0 4px 15px rgba(0, 255, 153, 0.5); }
+}
+nav a {
+  color: var(--accent);
+  margin: 0 20px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  transition: color 0.3s, transform 0.3s;
+}
+nav a:hover {
+  color: #fff;
+  text-shadow: 0 0 12px var(--glow);
+  transform: translateY(-2px);
+}
+.circuit-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.25;
+}
+.countdown {
+  text-align: center;
+  padding: 20px;
+  margin: 70px auto 10px;
+  width: 90%;
+  max-width: 800px;
+  color: var(--accent);
+  font-family: 'Space Mono', monospace;
+  font-size: 32px;
+  text-shadow: 0 0 10px var(--glow);
+  animation: slideIn 0.8s ease-out;
+}
+.hub-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 70px - 10px - 70px); /* Header height (~50px) + countdown bottom margin (10px) + countdown top margin (70px) */
+  padding: 20px;
+}
+.terminal-box {
+  background: rgba(15, 20, 30, 0.9);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  padding: 30px;
+  position: relative;
+  margin-bottom: 10%;
+  z-index: 1;
+  animation: bootUp 1.5s ease-out;
+}
+@keyframes bootUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+  padding-bottom: 20px; /* Added for spacing below last command */
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  animation: slideIn 0.8s ease-out;
+}
+@keyframes slideIn {
+  from { transform: translateX(-40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.prompt {
+  color: var(--secondary);
+}
+.cmd-line {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+.cmd-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--accent);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+}
+.cmd-input::placeholder {
+  color: var(--muted);
+}
+.hint {
+  font-size: 14px;
+  color: var(--secondary);
+  text-align: center;
+  margin-top: 25px;
+  font-family: 'Chakra Petch', sans-serif;
+}
+.typed-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  white-space: pre-wrap;
+  overflow: hidden;
+  border-right: 2px solid var(--accent);
+  animation: typing 2s steps(40, end), blink 0.5s step-end infinite;
+}
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--accent); }
+}
+@media (max-width: 768px) {
+  .terminal-box {
+    width: 95%;
+    padding: 20px;
+  }
+  .countdown {
+    margin: 60px auto 5px;
+    font-size: 18px;
+  }
+  .hub-container {
+    padding: 10px;
+    height: calc(100vh - 60px - 5px - 60px); /* Header height (~50px) + countdown bottom margin (5px) + countdown top margin (60px) */
+  }
+  .screen {
+    max-height: 300px;
+    padding-bottom: 15px; /* Adjusted for mobile */
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<canvas id="circuit" class="circuit-bg"></canvas>
+
+<div class="countdown" id="countdown"></div>
+<div class="hub-container">
+  <div class="terminal-box">
+    <div id="screen" class="screen"></div>
+    <div class="cmd-line">
+      <span class="prompt">> </span>
+      <input id="cmd" class="cmd-input" placeholder="type command..." autocomplete="off" />
+    </div>
+    <div class="hint">Enter ↵ • ↑/↓ history • try 'secret -h'</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('circuit');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawCircuit() {
+  ctx.strokeStyle = 'rgba(0, 255, 153, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 0; i < canvas.width; i += 50) {
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, canvas.height);
+  }
+  for (let i = 0; i < canvas.height; i += 50) {
+    ctx.moveTo(0, i);
+    ctx.lineTo(canvas.width, i);
+  }
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(0, 255, 153, 0.5)';
+  for (let i = 0; i < 20; i++) {
+    ctx.beginPath();
+    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+drawCircuit();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  drawCircuit();
+});
+
+// Countdown logic
+const startDate = new Date('2025-11-03T00:00:00+07:00');
+const endDate = new Date('2026-11-02T23:59:59+07:00');
+function updateCountdown() {
+  const now = new Date();
+  let daysLeft;
+  
+  if (now < startDate) {
+    // Before service starts
+    const diff = startDate - now;
+    const totalSeconds = Math.floor(diff / 1000);
+    const years = Math.floor(totalSeconds / (365 * 24 * 60 * 60));
+    const months = Math.floor((totalSeconds % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
+    const days = Math.floor((totalSeconds % (30 * 24 * 60 * 60)) / (24 * 60 * 60));
+    const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+    document.getElementById('countdown').textContent = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until service starts`;
+    daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24)); // Ceiling for days until start
+  } else if (now <= endDate) {
+    // During service
+    const diff = endDate - now;
+    const totalSeconds = Math.floor(diff / 1000);
+    const years = Math.floor(totalSeconds / (365 * 24 * 60 * 60));
+    const months = Math.floor((totalSeconds % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
+    const days = Math.floor((totalSeconds % (30 * 24 * 60 * 60)) / (24 * 60 * 60));
+    const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+    document.getElementById('countdown').textContent = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until return`;
+    daysLeft = Math.floor(totalSeconds / (24 * 60 * 60)); // Floor for days until end
+  } else {
+    // After service
+    document.getElementById('countdown').textContent = 'Service complete!';
+    daysLeft = 0;
+  }
+  return daysLeft;
+}
+setInterval(updateCountdown, 1000);
+let countdownDays = updateCountdown();
+
+const screen = document.getElementById('screen');
+const cmd = document.getElementById('cmd');
+let history = [], pos = -1;
+
+function out(t) {
+  const div = document.createElement('div');
+  div.textContent = t;
+  div.className = 'typed-text';
+  screen.appendChild(div);
+  screen.scrollTop = screen.scrollHeight;
+}
+function clearScr() { screen.innerHTML = ''; }
+
+const DATA = {
+  profile: "Loading..."
+};
+
+const SECRET_COMMANDS = {
+  '-h': () => out("Available secret commands: " + Object.keys(SECRET_COMMANDS).map(k => k === '-h' ? '-h' : `--${k}`).join(', ')),
+  'miss-you': () => out("Miss you too!"),
+  'stay-strong': () => out("Always."),
+  'countdown': () => {
+    const now = new Date();
+    if (now < startDate) {
+      out(`${countdownDays} days until service starts.`);
+    } else {
+      out(`${countdownDays} days until return.`);
+    }
+  },
+  'hope': () => out("Hope never dies."),
+  'hungry': () => out("Always hungry, always eating."),
+  'tired': () => out("Soldier mode: ON."),
+  'motivation': () => out("Pain is temporary, pride is forever."),
+  'friend': () => out("You’re never forgotten."),
+  'dream': () => out("Still dreaming of freedom."),
+  'mission': () => out("Survive and return."),
+  'smile': () => out("Smiling through it."),
+  'love': () => out("Love never expires."),
+  'future': () => out("Better days loading..."),
+  'timeout': () => out("Resting, don’t worry."),
+  'return': () => out("I’ll be back."),
+  'ping': () => out("Pong! Still connected."),
+  'safe': () => out("Yes, safe and sound."),
+  'hello': () => out("Reporting for duty!"),
+  '404': () => out("Freedom not found."),
+  'sudo': () => out("Permission granted: survive."),
+  'install': () => out("Installing patience… 99.9%."),
+  'uninstall': () => out("Can’t uninstall friendship."),
+  'readme': () => out("Just miss me sometimes."),
+  'whoami': () => out("Just your friend in uniform."),
+  'id': () => out("Soldier #1 (in your heart)."),
+  'key': () => out("You are the master key."),
+  'compass': () => out("Always pointing home."),
+  'flag': () => out("flag{i_10v3_y0u!}"),
+  'unlock': () => {
+    const now = new Date();
+    if (now < startDate) {
+      out(`Service starts in ${countdownDays} days.`);
+    } else {
+      out(`Freedom unlocked in ${countdownDays} days.`);
+    }
+  },
+  'easteregg': () => out("Secret message: I’m fine."),
+  'cheatcode': () => out("↑↑↓↓←→←→BA = miss you."),
+  'midnight': () => out("Sleepless but surviving."),
+  'star': () => out("Guiding light found. It's you hahaha.."),
+  'galaxy': () => out("You’re my universe."),
+  'connection': () => out("Stable, even across distance."),
+  'wru': () => out("I'm always here!"),
+  'endgame': () => out("Return home: mission complete.")
+};
+
+const CMD = {
+  help: () => out("Commands: whoami, profile, experience, ctf, bugbounty, cve, certs, clear, secret [-h]"),
+  whoami: () => out("r3zon"),
+  profile: () => out(DATA.profile),
+  experience: () => out(DATA.experience),
+  ctf: () => out(DATA.ctf),
+  bugbounty: () => out(DATA.bugbounty),
+  cve: () => out(DATA.cve),
+  certs: () => out(DATA.certs),
+  clear: () => clearScr(),
+  secret: (args) => {
+    if (!args || args === '-h') {
+      SECRET_COMMANDS['-h']();
+    } else if (SECRET_COMMANDS[args]) {
+      SECRET_COMMANDS[args]();
+    } else {
+      out(`secret: invalid option -- '${args}'`);
+    }
+  }
+};
+
+cmd.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    const v = cmd.value.trim();
+    if (!v) return;
+    out("> " + v);
+    const [command, ...args] = v.split(' ');
+    if (command === 'secret') {
+      CMD.secret(args[0]?.replace('--', ''));
+    } else if (CMD[command]) {
+      CMD[command]();
+    } else {
+      out("command not found");
+    }
+    history.push(v);
+    pos = history.length;
+    cmd.value = "";
+  }
+  if (e.key === "ArrowUp") {
+    pos = Math.max(0, pos - 1);
+    cmd.value = history[pos] || "";
+  }
+  if (e.key === "ArrowDown") {
+    pos = Math.min(history.length, pos + 1);
+    cmd.value = history[pos] || "";
+  }
+});
+
+out("$ whoami");
+out("r3zon");
+out("Type 'help' to see commands");
+</script>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>r3zon — Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c1018;
+  --accent: #00ff99;
+  --secondary: #ff00cc;
+  --muted: #a0a8c0;
+  --glow: rgba(0, 255, 153, 0.7);
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--bg);
+  font-family: 'Space Mono', monospace;
+  color: var(--muted);
+  overflow-x: hidden;
+}
+body {
+  background: linear-gradient(135deg, #0c1018, #1c2638);
+  position: relative;
+}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(17, 17, 17, 0.95), rgba(17, 17, 17, 0.85));
+  padding: 15px 0;
+  z-index: 50;
+  text-align: center;
+  /*box-shadow: 0 4px 10px rgba(0, 255, 153, 0.3);*/
+  /*animation: headerGlow 2s ease-in-out infinite;*/
+}
+@keyframes headerGlow {
+  0%, 100% { box-shadow: 0 4px 10px rgba(0, 255, 153, 0.3); }
+  50% { box-shadow: 0 4px 15px rgba(0, 255, 153, 0.5); }
+}
+nav a {
+  color: var(--accent);
+  margin: 0 20px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  transition: color 0.3s, transform 0.3s;
+}
+nav a:hover {
+  color: #fff;
+  text-shadow: 0 0 12px var(--glow);
+  transform: translateY(-2px);
+}
+.search-bar {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 600px;
+  z-index: 45;
+  background: rgba(15, 20, 30, 0.9);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 20px;
+  /*box-shadow: 0 0 20px var(--glow);*/
+  /*animation: searchFade 1s ease-out;*/
+}
+@keyframes searchFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--accent);
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  padding: 5px;
+}
+.search-input::placeholder {
+  color: var(--muted);
+}
+.circuit-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.25;
+}
+.hub-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 20px;
+}
+.blog-hub {
+  background: rgba(15, 20, 30, 0.9);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  padding: 30px;
+  position: relative;
+  z-index: 1;
+  animation: bootUp 1.5s ease-out;
+}
+@keyframes bootUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+h2 {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 40px;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 4px;
+  animation: scanEffect 3s infinite;
+}
+@keyframes scanEffect {
+  0%, 100% { text-shadow: 0 0 10px var(--glow), 0 0 20px var(--accent); }
+  50% { text-shadow: 0 0 20px var(--glow), 0 0 30px var(--accent); }
+}
+.blog-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.blog-card {
+  background: rgba(30, 35, 45, 0.8);
+  padding: 20px;
+  border-radius: 8px;
+  transition: transform 0.3s;
+  animation: slideIn 0.8s ease-out;
+}
+.blog-card.hidden {
+  display: none;
+}
+.blog-card:hover {
+  transform: scale(1.02);
+}
+.featured {
+  background: rgba(40, 45, 55, 0.8);
+}
+.blog-card h3 {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 22px;
+  margin: 0 0 10px;
+}
+.blog-card h3 a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.blog-card h3 a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px var(--glow);
+}
+.meta {
+  font-size: 14px;
+  color: var(--secondary);
+  margin-bottom: 10px;
+}
+.blog-card p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 0 15px;
+}
+.post-image {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 8px;
+  margin: 20px auto;
+  display: block;
+  animation: slideIn 0.8s ease-out;
+}
+.typed-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  white-space: pre-wrap;
+  overflow: hidden;
+  border-right: 2px solid var(--accent);
+  animation: typing 3s steps(40, end), blink 0.5s step-end infinite;
+}
+.post-content p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 15px;
+  animation: slideIn 0.8s ease-out;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+}
+.tag {
+  background: rgba(0, 255, 153, 0.2);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--accent);
+  font-family: 'Chakra Petch', sans-serif;
+}
+.error-message {
+  color: var(--secondary);
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+@keyframes slideIn {
+  from { transform: translateX(-40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--accent); }
+}
+@media (min-width: 768px) {
+  .blog-list {
+    grid-template-columns: 1fr 1fr;
+  }
+  .featured {
+    grid-column: span 2;
+  }
+}
+@media (max-width: 768px) {
+  .blog-hub {
+    width: 95%;
+    padding: 20px;
+  }
+  h2 {
+    font-size: 32px;
+  }
+  .post-image {
+    max-width: 100%;
+  }
+  nav a {
+    margin: 0 10px;
+    font-size: 16px;
+  }
+  .search-bar {
+    top: 60px;
+    width: 80%;
+    max-width: 300px;
+    padding: 8px 15px;
+  }
+  .search-input {
+    font-size: 14px;
+  }
+  .hub-container {
+    padding: 110px 10px 10px;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<div class="search-bar">
+  <input type="text" id="search-input" class="search-input" placeholder="Search blogs...">
+</div>
+
+<canvas id="circuit" class="circuit-bg"></canvas>
+
+<div class="hub-container">
+  <div class="blog-hub">
+    <div id="blog-content" class="blog-list"></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('circuit');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawCircuit() {
+  ctx.strokeStyle = 'rgba(0, 255, 153, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 0; i < canvas.width; i += 50) {
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, canvas.height);
+  }
+  for (let i = 0; i < canvas.height; i += 50) {
+    ctx.moveTo(0, i);
+    ctx.lineTo(canvas.width, i);
+  }
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(0, 255, 153, 0.5)';
+  for (let i = 0; i < 20; i++) {
+    ctx.beginPath();
+    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+drawCircuit();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  drawCircuit();
+});
+
+let allPosts = [];
+
+function renderPosts(posts) {
+  const contentDiv = document.getElementById("blog-content");
+  contentDiv.innerHTML = '';
+  if (!posts.length) {
+    contentDiv.className = "";
+    contentDiv.innerHTML = '<p class="error-message">No posts found matching your search.</p>';
+    return;
+  }
+  contentDiv.className = "blog-list";
+  posts.forEach(post => {
+    const card = document.createElement("div");
+    card.className = `blog-card ${post.featured ? "featured" : ""}`;
+    card.innerHTML = `
+      <h3><a href="blog.html?id=${post.id}">${post.title}</a></h3>
+      <div class="meta">${post.date} • ${post.readTime}</div>
+      <p>${post.excerpt}</p>
+      <div class="tags">
+        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+      </div>
+    `;
+    contentDiv.appendChild(card);
+  });
+}
+
+async function loadContent() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+    const res = await fetch("static/posts.json");
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    allPosts = await res.json();
+    const contentDiv = document.getElementById("blog-content");
+
+    if (postId) {
+      // Single post view
+      const post = allPosts.find(p => p.id == postId);
+      if (post) {
+        contentDiv.className = "";
+        contentDiv.innerHTML = `
+          <h2>${post.title}</h2>
+          <div class="meta">${post.date} • ${post.readTime}</div>
+          <div class="post-content"></div>
+          <div class="tags"></div>
+        `;
+        const postContent = document.querySelector(".post-content");
+
+        // Process content with image placeholders
+        const segments = post.content.split('\n').filter(s => s.trim());
+        let firstText = true;
+        segments.forEach(segment => {
+          if (segment.match(/{img\d+}/)) {
+            const imgIndex = parseInt(segment.match(/\d+/)[0]);
+            const img = post.images ? post.images.find(i => i.position === imgIndex) : null;
+            if (img) {
+              const imgElement = document.createElement("img");
+              imgElement.className = "post-image";
+              imgElement.src = img.src;
+              imgElement.alt = `Image ${imgIndex} for ${post.title}`;
+              postContent.appendChild(imgElement);
+            }
+          } else {
+            const p = document.createElement("p");
+            p.textContent = segment;
+            if (firstText && segment.trim()) {
+              p.className = "typed-text";
+              firstText = false;
+            }
+            postContent.appendChild(p);
+          }
+        });
+
+        // Render tags
+        const tagsDiv = document.querySelector(".tags");
+        post.tags.forEach(tag => {
+          const span = document.createElement("span");
+          span.className = "tag";
+          span.textContent = tag;
+          tagsDiv.appendChild(span);
+        });
+      } else {
+        contentDiv.className = "";
+        contentDiv.innerHTML = '<p class="error-message">Sorry, the requested post could not be found.</p>';
+      }
+    } else {
+      // Blog list view
+      contentDiv.className = "blog-list";
+      renderPosts(allPosts);
+    }
+  } catch (err) {
+    console.error("Error loading posts.json:", err.message);
+    const contentDiv = document.getElementById("blog-content");
+    contentDiv.className = "";
+    contentDiv.innerHTML = '<p class="error-message">Failed to load blog posts. Please try again later.</p>';
+  }
+}
+
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase();
+  const filteredPosts = allPosts.filter(post =>
+    post.title.toLowerCase().includes(query) ||
+    post.excerpt.toLowerCase().includes(query) ||
+    post.tags.some(tag => tag.toLowerCase().includes(query))
+  );
+  renderPosts(filteredPosts);
+});
+
+loadContent();
+</script>
+</body>
+</html>

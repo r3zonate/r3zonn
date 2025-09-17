@@ -1,0 +1,23 @@
+{
+  "name": "r3zon",
+  "intro": "Hi! I’m r3zon, a junior cybersecurity enthusiast. I’m learning ethical hacking, vulnerability assessment, and red teaming, and I’m passionate about growing in cybersecurity.",
+  "experience": [
+    "2025 Nov - Present (1Y): Pvt.",
+    "2024 May - 2025 Oct (1.6Y): Penetration Tester"
+  ],
+  "certifications": [
+    "2026 | Loading...",
+    "2025 Mar | CRTA (Certified Red Team Analyst)",
+    "2025 Jan | CWES (Certified Web Exploitation Specialist)"
+  ],
+  "activities": [
+  	"[]"
+  ],
+  "profiles": [
+    {
+      "platform": "HackTheBox",
+      "url": "https://app.hackthebox.com/profile/2041686",
+      "icon": "fas fa-box"
+    }
+  ]
+}
