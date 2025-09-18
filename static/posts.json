@@ -5,9 +5,9 @@
     "date": "2025-09-10",
     "readTime": "5 min read",
     "excerpt": "Test 01",
-    "content": "Hi.\n{img1}\nHi2 \n{img4}\nHi3.\nTest.",
+    "content": "\n{img1}\nสวัสดีครับ \n{img4}\nHi3.\nTest.",
     "images": [
-      { "src": "images/macbook-m4.jpg", "position": 1 },
+      { "src": "images/x.png", "position": 1 },
       { "src": "images/thinkpad-x1.jpg", "position": 2 },
       { "src": "images/thinkpad-x1.jpg", "position": 3 },
       { "src": "images/thinkpad-x1.jpg", "position": 4 }
@@ -22,7 +22,9 @@
     "readTime": "0 min read",
     "excerpt": "XXXX",
     "content": "XXXX",
-    "images": [],
+    "images": [
+      { "src": "images/eren.png", "position": 1 }
+    ],
     "tags": ["ctf", "cybersecurity", "hacking"],
     "link": "blog.html?id=2"
   },
