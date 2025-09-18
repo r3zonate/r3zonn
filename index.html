@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>r3zon</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=stylesheet" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=stylesheet" rel="stylesheet"> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Athiti:wght@200;300;400;500;600;700&family=Oxanium:wght@200..800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0c1018;
@@ -103,7 +106,7 @@ nav a:hover {
   flex: 1;
   overflow-y: auto;
   max-height: 400px;
-  padding-bottom: 20px; /* Added for spacing below last command */
+  padding-bottom: 20px;
   color: var(--accent);
   font-size: 15px;
   line-height: 1.6;
@@ -176,17 +179,27 @@ nav a:hover {
     min-height: calc(100vh - 120px);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* ให้เนื้อหาขึ้นไปข้างบน */
+    justify-content: flex-start;
   }
   .screen {
     max-height: 300px;
-    padding-bottom: 15px; /* Adjusted for mobile */
+    padding-bottom: 15px;
   }
   nav a {
     margin: 0 10px;
     font-size: 16px;
   }
 }
+html, body {
+  font-family: 'Oxanium', sans-serif;
+}
+span[lang="th"] {
+  font-family: 'Athiti', sans-serif;
+}
+span[lang="en"] {
+  font-family: 'Oxanium', sans-serif;
+}
+
 </style>
 </head>
 <body>
@@ -194,7 +207,6 @@ nav a:hover {
   <nav>
     <a href="index.html">Home</a>
     <a href="blog.html">Blog</a>
-    <!-- <a href="about.html">About</a> -->
   </nav>
 </header>
 
@@ -208,7 +220,7 @@ nav a:hover {
       <span class="prompt">> </span>
       <input id="cmd" class="cmd-input" placeholder="type command..." autocomplete="off" />
     </div>
-    <div class="hint">Enter ↵ • ↑/↓ history • try 'secret -h'</div>
+    <div class="hint">Enter ↵ • ↑/↓ history</div>
   </div>
 </div>
 
@@ -265,7 +277,7 @@ function updateCountdown() {
     const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
     const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
     const seconds = totalSeconds % 60;
-    document.getElementById('countdown').textContent = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until service starts`;
+    document.getElementById('countdown').innerHTML = `${years}Y ${months}M ${days}D ${hours}H ${minutes}m ${seconds}s<br>until service starts`;
     daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24)); // Ceiling for days until start
   } else if (now <= endDate) {
     // During service
@@ -277,7 +289,7 @@ function updateCountdown() {
     const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
     const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
     const seconds = totalSeconds % 60;
-    document.getElementById('countdown').textContent = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until return`;
+    document.getElementById('countdown').textContent = `${years}Y ${months}M ${days}D ${hours}H ${minutes}m ${seconds}s<br>until return`;
     daysLeft = Math.floor(totalSeconds / (24 * 60 * 60)); // Floor for days until end
   } else {
     // After service
@@ -303,11 +315,11 @@ function out(t) {
 function clearScr() { screen.innerHTML = ''; }
 
 const DATA = {
-  profile: "-",
+  profile: "Loading...",
   experience: "2025 Nov - Present: Pvt.\n2024 May - 2025 Oct: Penetration Tester",
-  ctf: "-",
-  bugbounty: "-",
-  cve: "-",
+  ctf: "",
+  bugbounty: "",
+  cve: "",
   certs: "CRTA (2025 Mar), CWES (2025 Jan)"
 };
 
