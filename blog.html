@@ -377,11 +377,15 @@ function renderPosts(posts) {
     const card = document.createElement("div");
     card.className = `blog-card ${post.featured ? "featured" : ""}`;
     const coverImage = post.images ? post.images.find(img => img.position === 1) : null;
+
+    const wrappedTitle = wrapTextByLang(post.title);
+    const wrappedExcerpt = wrapTextByLang(post.excerpt);
+
     card.innerHTML = `
-      <h3><a href="blog.html?id=${post.id}">${post.title}</a></h3>
+      <h3><a href="blog.html?id=${post.id}">${wrappedTitle}</a></h3>
       <div class="meta">${post.date} • ${post.readTime}</div>
       ${coverImage ? `<img class="post-image" src="${coverImage.src}" alt="Cover image for ${post.title}">` : ''}
-      <p>${post.excerpt}</p>
+      <p>${wrappedExcerpt}</p>
       <div class="tags">
         ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
       </div>
@@ -389,6 +393,7 @@ function renderPosts(posts) {
     contentDiv.appendChild(card);
   });
 }
+
 
 async function loadContent() {
   try {
