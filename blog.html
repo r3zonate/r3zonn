@@ -2,9 +2,13 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>r3zon — Blog</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
+<!-- <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet"> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Athiti:wght@200;300;400;500;600;700&family=Oxanium:wght@200..800&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --bg: #0c1018;
@@ -67,12 +71,6 @@ nav a:hover {
   border: 2px solid var(--accent);
   border-radius: 8px;
   padding: 10px 20px;
-  /*box-shadow: 0 0 20px var(--glow);*/
-  /*animation: searchFade 1s ease-out;*/
-}
-@keyframes searchFade {
-  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 .search-input {
   width: 100%;
@@ -102,7 +100,7 @@ nav a:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 20px 20px;
+  padding: 140px 20px 20px;
 }
 .blog-hub {
   background: rgba(15, 20, 30, 0.9);
@@ -180,7 +178,7 @@ h2 {
   width: 100%;
   max-width: 700px;
   border-radius: 8px;
-  margin: 20px auto;
+  margin: 15px auto;
   display: block;
   animation: slideIn 0.8s ease-out;
 }
@@ -245,16 +243,9 @@ h2 {
     width: 95%;
     padding: 20px;
   }
-/*  h2 {
-    font-size: 32px;
-  }*/
   .post-image {
     max-width: 100%;
   }
-/*  nav a {
-    margin: 0 10px;
-    font-size: 16px;
-  }*/
   .search-bar {
     top: 60px;
     width: 80%;
@@ -276,6 +267,16 @@ h2 {
     font-size: 16px;
   }
 }
+html, body {
+  font-family: 'Oxanium', sans-serif; /* ฟอนต์หลักเป็นอังกฤษ */
+}
+span[lang="th"] {
+  font-family: 'Athiti', sans-serif; /* ภาษาไทยใช้ Athiti */
+}
+span[lang="en"] {
+  font-family: 'Oxanium', sans-serif; /* ภาษาอังกฤษ/ตัวเลขใช้ Oxanium */
+}
+
 </style>
 </head>
 <body>
@@ -283,7 +284,6 @@ h2 {
   <nav>
     <a href="index.html">Home</a>
     <a href="blog.html">Blog</a>
-<!--     <a href="about.html">About</a> -->
   </nav>
 </header>
 
@@ -337,6 +337,33 @@ window.addEventListener('resize', () => {
 
 let allPosts = [];
 
+function wrapTextByLang(text) {
+  const container = document.createElement("span");
+
+  // แบ่งข้อความเป็นกลุ่ม ๆ : ไทย | อังกฤษ/ตัวเลข | อื่น ๆ
+  const parts = text.match(/[\u0E00-\u0E7F]+|[A-Za-z0-9]+|[^A-Za-z0-9\u0E00-\u0E7F]+/g) || [];
+
+  parts.forEach(part => {
+    if (/^[\u0E00-\u0E7F]+$/.test(part)) {
+      const span = document.createElement("span");
+      span.setAttribute("lang", "th");
+      span.textContent = part;
+      container.appendChild(span);
+    } else if (/^[A-Za-z0-9]+$/.test(part)) {
+      const span = document.createElement("span");
+      span.setAttribute("lang", "en");
+      span.textContent = part;
+      container.appendChild(span);
+    } else {
+      container.appendChild(document.createTextNode(part));
+    }
+  });
+
+  return container.innerHTML;
+}
+
+
+
 function renderPosts(posts) {
   const contentDiv = document.getElementById("blog-content");
   contentDiv.innerHTML = '';
@@ -349,9 +376,11 @@ function renderPosts(posts) {
   posts.forEach(post => {
     const card = document.createElement("div");
     card.className = `blog-card ${post.featured ? "featured" : ""}`;
+    const coverImage = post.images ? post.images.find(img => img.position === 1) : null;
     card.innerHTML = `
       <h3><a href="blog.html?id=${post.id}">${post.title}</a></h3>
       <div class="meta">${post.date} • ${post.readTime}</div>
+      ${coverImage ? `<img class="post-image" src="${coverImage.src}" alt="Cover image for ${post.title}">` : ''}
       <p>${post.excerpt}</p>
       <div class="tags">
         ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
@@ -399,7 +428,7 @@ async function loadContent() {
             }
           } else {
             const p = document.createElement("p");
-            p.textContent = segment;
+            p.innerHTML = wrapTextByLang(segment);
             if (firstText && segment.trim()) {
               p.className = "typed-text";
               firstText = false;
