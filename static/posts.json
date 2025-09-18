@@ -1,10 +1,10 @@
 [
   {
     "id": 1,
-    "title": "TEST 01",
+    "title": "การสอบ",
     "date": "2025-09-10",
     "readTime": "5 min read",
-    "excerpt": "Test 01",
+    "excerpt": "รีวิว",
     "content": "\n{img1}\nสวัสดีครับ \n{img4}\nHi3.\nTest.",
     "images": [
       { "src": "images/x.png", "position": 1 },
