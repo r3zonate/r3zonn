@@ -7,7 +7,7 @@
     "excerpt": "รีวิว",
     "content": "\n{img1}\nสวัสดีครับ \n{img4}\nHi3.\nTest.",
     "images": [
-      { "src": "images/x.png", "position": 1 },
+      { "src": "images/x.png", "position": 5 },
       { "src": "images/thinkpad-x1.jpg", "position": 2 },
       { "src": "images/thinkpad-x1.jpg", "position": 3 },
       { "src": "images/thinkpad-x1.jpg", "position": 4 }
