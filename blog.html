@@ -99,7 +99,7 @@ nav a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; 
   padding: 140px 20px 20px;
 }
 .blog-hub {
@@ -120,27 +120,43 @@ h2 {
   font-family: 'Chakra Petch', sans-serif;
   font-size: 40px;
   color: var(--accent);
-  text-align: center;
+  text-align: left;
   margin-bottom: 30px;
   letter-spacing: 4px;
-  animation: scanEffect 3s infinite;
+  /*animation: scanEffect 3s infinite;*/
 }
 @keyframes scanEffect {
   0%, 100% { text-shadow: 0 0 10px var(--glow), 0 0 20px var(--accent); }
   50% { text-shadow: 0 0 20px var(--glow), 0 0 30px var(--accent); }
 }
-.blog-list {
+/*.blog-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
+  align-items: start;
 }
+
 .blog-card {
   background: rgba(30, 35, 45, 0.8);
   padding: 20px;
   border-radius: 8px;
   transition: transform 0.3s;
   animation: slideIn 0.8s ease-out;
+}*/
+.blog-list {
+  column-count: 2;
+  gap: 20px;
 }
+
+.blog-card {
+  background: rgba(30, 35, 45, 0.8);
+  display: inline-block;
+  width: 90%;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
 .blog-card.hidden {
   display: none;
 }
@@ -239,6 +255,19 @@ h2 {
   }
 }
 @media (max-width: 768px) {
+  .blog-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+    align-items: start;
+  }
+  .blog-card {
+    background: rgba(30, 35, 45, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+    animation: slideIn 0.8s ease-out;
+  }
   .blog-hub {
     width: 95%;
     padding: 20px;
@@ -409,12 +438,14 @@ async function loadContent() {
       const post = allPosts.find(p => p.id == postId);
       if (post) {
         contentDiv.className = "";
+        const wrappedTitle = wrapTextByLang(post.title);
         contentDiv.innerHTML = `
-          <h2>${post.title}</h2>
+          <h2>${wrappedTitle}</h2>
           <div class="meta">${post.date} • ${post.readTime}</div>
           <div class="post-content"></div>
           <div class="tags"></div>
         `;
+
         const postContent = document.querySelector(".post-content");
 
         // Process content with image placeholders
