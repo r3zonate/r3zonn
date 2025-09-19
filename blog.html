@@ -132,17 +132,28 @@ h2 {
   50% { text-shadow: 0 0 20px var(--glow), 0 0 30px var(--accent); }
 }
 .blog-list {
-  column-count: 2;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive */
+  gap: 20px; /* ช่องว่างระหว่างการ์ด */
+  justify-items: center; /* จัดให้การ์ดอยู่กลาง column */
+  align-items: start;
+  width: 100%;
+  margin: 0 auto; /* centering grid container */
 }
+
 .blog-card {
   background: rgba(30, 35, 45, 0.8);
-  display: inline-block;
-  width: 90%;
-  margin: 10px;
+  width: 100%; /* ให้เต็ม column */
   padding: 20px;
   border-radius: 8px;
+  transition: transform 0.3s;
+  animation: slideIn 0.8s ease-out;
+  box-sizing: border-box; /* ป้องกัน padding ทำให้ overflow */
+  margin: 0; /* ลบ margin เดิมที่ทำให้ทับกัน */
+  display: flex;
+  flex-direction: column;
 }
+
 .blog-card.hidden {
   display: none;
 }
@@ -150,8 +161,10 @@ h2 {
   transform: scale(1.02);
 }
 .featured {
-  background: rgba(40, 45, 55, 0.8);
+  grid-column: span 2; /* ให้ครอบสอง column */
+  width: 100%;
 }
+
 .blog-card h3 {
   font-family: 'Chakra Petch', sans-serif;
   font-weight: 500;
@@ -255,9 +268,9 @@ h2 {
     border-radius: 8px;
     transition: transform 0.3s;
     animation: slideIn 0.8s ease-out;
+    margin: 10px;
   }
   .blog-hub {
-    width: 95%;
     padding: 20px;
   }
   .post-image {
