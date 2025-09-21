@@ -1,0 +1,43 @@
+ยินดีต้อนรับสู่บล็อกของเรา! นี่คือตัวอย่างการผสมข้อความภาษาไทยกับ English words เพื่อทดสอบฟีเจอร์ wrapTextByLang.
+
+คุณสามารถใช้ inline code ได้ เช่น `searchParameter` เพื่อเน้นโค้ดสั้น ๆ ในประโยค
+
+ต่อไปจะเป็น code block ตัวอย่าง:
+
+```
+$ IP=10.10.11.87
+ports=$(sudo nmap -Pn -sS -p- -T4 ${IP} | grep -E '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed 's/,$//')
+nmap -p${ports} -sC -sV ${IP}
+[sudo] password for r3zon: 
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-21 20:01 +07
+Nmap scan report for 10.10.11.87
+Host is up (0.055s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 10.0p2 Debian 8 (protocol 2.0)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 2.29 seconds
+```
+
+
+สามารถใส่รูปภาพด้วย placeholders ดังนี้:
+{img1}
+
+นี่คือตัวอย่างอีก paragraph หนึ่ง ภาษาไทยผสม English: การเขียน blog ในยุคปัจจุบันต้องเข้าใจทั้ง HTML, CSS และ JavaScript
+
+และตัวอย่าง code block อีกแบบหนึ่ง:
+
+```
+const colors = ["red", "green", "blue"];
+colors.forEach(c => console.log(c));
+```
+
+
+คุณยังสามารถใส่ inline code หลายอัน เช่น `myFunction()` และ `userInput` เพื่อทดสอบ highlight
+
+สุดท้าย ใส่ placeholder รูปภาพอันที่สอง:
+{img2}
+
+ขอบคุณที่ติดตามบล็อกของเรา! นี่คือการทดสอบ wrapTextByLang ทั้งภาษาไทย, อังกฤษ, ตัวเลข 123 และสัญลักษณ์ #@$%
