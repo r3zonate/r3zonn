@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>r3zon — Blog</title>
-<!-- <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet"> -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Athiti:wght@200;300;400;500;600;700&family=Oxanium:wght@200..800&display=swap" rel="stylesheet">
@@ -41,10 +40,6 @@ header {
   padding: 15px 0;
   z-index: 50;
   text-align: center;
-}
-@keyframes headerGlow {
-  0%, 100% { box-shadow: 0 4px 10px rgba(0, 255, 153, 0.3); }
-  50% { box-shadow: 0 4px 15px rgba(0, 255, 153, 0.5); }
 }
 nav a {
   color: var(--accent);
@@ -113,200 +108,159 @@ nav a:hover {
   z-index: 1;
   animation: bootUp 1.5s ease-out;
 }
-@keyframes bootUp {
-  from { opacity: 0; transform: translateY(50px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 h2 {
   font-family: 'Space Mono', monospace;
-  /*font-weight: 600;*/
   font-size: 38px;
   color: var(--accentx);
   text-align: center;
   margin-bottom: 30px;
   letter-spacing: 4px;
-  /*animation: scanEffect 3s infinite;*/
-}
-@keyframes scanEffect {
-  0%, 100% { text-shadow: 0 0 10px var(--glow), 0 0 20px var(--accent); }
-  50% { text-shadow: 0 0 20px var(--glow), 0 0 30px var(--accent); }
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 .blog-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive */
-  gap: 20px; /* ช่องว่างระหว่างการ์ด */
-  justify-items: center; /* จัดให้การ์ดอยู่กลาง column */
-  align-items: start;
-  width: 100%;
-  margin: 0 auto; /* centering grid container */
+  column-count: 2;
+  column-gap: 24px;
+  padding: 10px 0;
 }
-
 .blog-card {
-  background: rgba(30, 35, 45, 0.8);
-  width: 100%; /* ให้เต็ม column */
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 24px;
+  background: rgba(30, 35, 45, 0.85);
+  border-radius: 10px;
   padding: 20px;
-  border-radius: 8px;
-  transition: transform 0.3s;
-  animation: slideIn 0.8s ease-out;
-  box-sizing: border-box; /* ป้องกัน padding ทำให้ overflow */
-  margin: 0; /* ลบ margin เดิมที่ทำให้ทับกัน */
-  display: flex;
-  flex-direction: column;
-}
-
-.blog-card.hidden {
-  display: none;
+  box-sizing: border-box;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  break-inside: avoid;
 }
 .blog-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.55);
 }
-.featured {
-  grid-column: span 2; /* ให้ครอบสอง column */
-  width: 100%;
-}
-
 .blog-card h3 {
-  font-family: 'Chakra Petch', sans-serif;
-  font-weight: 500;
-  /*color: white;*/
-  font-size: 22px;
-  margin: 0 0 10px;
+  font-size: 20px;
+  margin: 0 0 12px;
+  color: var(--accentx);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 .blog-card h3 a {
-  color: var(--accentx);
   text-decoration: none;
+  color: var(--accentx);
 }
 .blog-card h3 a:hover {
   color: var(--accent);
-  /*text-shadow: 0 0 4px var(--glow);*/
 }
-.meta {
-  font-size: 14px;
+.blog-card .meta {
+  font-size: 13px;
   color: var(--secondary);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .blog-card p {
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--muted);
-  margin: 0 0 15px;
-}
-.post-image {
-  width: 100%;
-  max-width: 700px;
-  border-radius: 8px;
-  margin: 15px auto;
-  display: block;
-  animation: slideIn 0.8s ease-out;
-}
-.typed-text {
-  font-size: 16px;
-  line-height: 1.7;
-  color: var(--muted);
-  white-space: pre-wrap;
-  overflow: hidden;
-  border-right: 2px solid var(--accent);
-  animation: typing 3s steps(40, end), blink 0.5s step-end infinite;
-}
-.post-content p {
-  font-size: 16px;
-  line-height: 1.7;
-  color: var(--muted);
-  margin-bottom: 15px;
-  animation: slideIn 0.8s ease-out;
+  margin: 0 0 12px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 20px;
 }
 .tag {
-  background: rgba(0, 255, 153, 0.2);
-  padding: 4px 10px;
-  border-radius: 4px;
+  background: rgba(0, 255, 153, 0.15);
+  padding: 3px 10px;
+  border-radius: 5px;
   font-size: 13px;
   color: var(--accent);
   font-family: 'Chakra Petch', sans-serif;
+  transition: background 0.3s;
 }
-.error-message {
-  color: var(--secondary);
+.tag:hover {
+  background: rgba(0, 255, 153, 0.3);
+}
+.post-image { 
+  width: 100%; max-width: 700px; border-radius: 8px; margin: 15px auto; display: block; animation: slideIn 0.8s ease-out; }
+.typed-text { 
+  white-space: pre-wrap; overflow: hidden; border-right: 2px solid var(--accent); animation: typing 3s steps(40, end), blink 0.5s step-end infinite; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+.tag { background: rgba(0, 255, 153, 0.2); padding: 4px 10px; border-radius: 4px; font-size: 13px; color: var(--accent); font-family: 'Chakra Petch', sans-serif; }
+.error-message { color: var(--secondary); font-size: 16px; text-align: center; padding: 20px; }
+p code {
+  background: rgba(0, 255, 153, 0.15);
+  color: var(--accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.95em;
+}
+pre {
+  background: rgba(30, 35, 45, 0.95);
+  border: 1px solid rgba(0, 255, 153, 0.2);
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+pre code {
+  color: var(--accentx);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9em;
+  line-height: 1.6;
+  white-space: pre;
+  display: block;
+}
+.post-content {
+  font-family: 'Athiti', sans-serif;
   font-size: 16px;
-  text-align: center;
-  padding: 20px;
 }
-@keyframes slideIn {
-  from { transform: translateX(0px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+.post-content p {
+  font-family: 'Athiti', sans-serif;
+  /*font-size: 16px;*/
 }
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
+.post-content span[lang="th"] {
+  font-family: 'Athiti', sans-serif !important;
+  font-size: 20px;
 }
-@keyframes blink {
-  from, to { border-color: transparent; }
-  50% { border-color: var(--accent); }
-}
-@media (min-width: 768px) {
-  .blog-list {
-    grid-template-columns: 1fr 1fr;
-  }
-  .featured {
-    grid-column: span 2;
-  }
-}
-@media (max-width: 768px) {
-  .blog-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 5px;
-    align-items: start;
-  }
-  .blog-card {
-    background: rgba(30, 35, 45, 0.8);
-    padding: 20px;
-    border-radius: 8px;
-    transition: transform 0.3s;
-    animation: slideIn 0.8s ease-out;
-    margin: 10px;
-  }
-  .blog-hub {
-    padding: 20px;
-  }
-  .post-image {
-    max-width: 100%;
-  }
-  .search-bar {
-    top: 60px;
-    width: 80%;
-    max-width: 300px;
-    padding: 8px 15px;
-  }
-  .search-input {
-    font-size: 14px;
-  }
-  .hub-container {
-    padding: 110px 10px 10px;
-  }
-  .screen {
-    max-height: 300px;
-    padding-bottom: 15px;
-  }
-  nav a {
-    margin: 0 10px;
-    font-size: 16px;
-  }
-}
-html, body {
+.post-content span[lang="en"] {
   font-family: 'Oxanium', sans-serif;
 }
+#blog-content .meta {
+  color: var(--secondary) !important;
+}
+@keyframes slideIn { from { transform: translateX(0px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes typing { from { width: 0; } to { width: 100%; } }
+@keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--accent); } }
+@media (max-width: 768px) {
+  .blog-list {
+    column-count: 1;
+  }
+  .blog-card { flex: 1 1 100%; max-width: 100%; }
+  .blog-hub { padding: 20px; }
+  .post-image { max-width: 100%; }
+  .search-bar { top: 60px; width: 80%; max-width: 300px; padding: 8px 15px; }
+  .search-input { font-size: 14px; }
+  .hub-container { padding: 110px 10px 10px; }
+  nav a { margin: 0 10px; font-size: 16px; }
+}
+html, body { font-family: 'Oxanium', sans-serif; }
 span[lang="th"] {
-  font-family: 'Athiti', sans-serif;
+  font-family: 'Athiti', sans-serif !important;
 }
 span[lang="en"] {
   font-family: 'Oxanium', sans-serif;
 }
-
 </style>
 </head>
 <body>
@@ -316,115 +270,79 @@ span[lang="en"] {
     <a href="blog.html">Blog</a>
   </nav>
 </header>
-
 <div class="search-bar">
   <input type="text" id="search-input" class="search-input" placeholder="Search blogs...">
 </div>
-
 <canvas id="circuit" class="circuit-bg"></canvas>
-
 <div class="hub-container">
   <div class="blog-hub">
     <div id="blog-content" class="blog-list"></div>
   </div>
 </div>
 
+
 <script>
 const canvas = document.getElementById('circuit');
 const ctx = canvas.getContext('2d');
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 function drawCircuit() {
   ctx.strokeStyle = 'rgba(0, 255, 153, 0.3)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  for (let i = 0; i < canvas.width; i += 50) {
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, canvas.height);
-  }
-  for (let i = 0; i < canvas.height; i += 50) {
-    ctx.moveTo(0, i);
-    ctx.lineTo(canvas.width, i);
-  }
+  for (let i = 0; i < canvas.width; i += 50) { ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); }
+  for (let i = 0; i < canvas.height; i += 50) { ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); }
   ctx.stroke();
   ctx.fillStyle = 'rgba(0, 255, 153, 0.5)';
   for (let i = 0; i < 20; i++) {
     ctx.beginPath();
-    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 3, 0, Math.PI * 2);
+    ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 3, 0, Math.PI*2);
     ctx.fill();
   }
 }
-
 drawCircuit();
-
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  drawCircuit();
-});
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; drawCircuit(); });
 
 let allPosts = [];
-
 function wrapTextByLang(text) {
   const container = document.createElement("span");
-
-  // แบ่งข้อความเป็นกลุ่ม ๆ : ไทย | อังกฤษ/ตัวเลข | อื่น ๆ
-  const parts = text.match(/[\u0E00-\u0E7F]+|[A-Za-z0-9]+|[^A-Za-z0-9\u0E00-\u0E7F]+/g) || [];
-
+  const parts = text.match(/[\u0E00-\u0E7F]+|[A-Za-z0-9]+|\{img\d+\}|`[^`]+`|[^A-Za-z0-9\u0E00-\u0E7F\{img\d+\}`]+/g) || [];
   parts.forEach(part => {
-    if (/^[\u0E00-\u0E7F]+$/.test(part)) {
+    if (/^[\u0E00-\u0E7F]+$/.test(part)) { 
       const span = document.createElement("span");
-      span.setAttribute("lang", "th");
-      span.textContent = part;
+      span.setAttribute("lang", "th"); 
+      span.textContent = part; 
       container.appendChild(span);
-    } else if (/^[A-Za-z0-9]+$/.test(part)) {
-      const span = document.createElement("span");
-      span.setAttribute("lang", "en");
-      span.textContent = part;
+    } else if (/^[A-Za-z0-9]+$/.test(part)) { 
+      const span = document.createElement("span"); 
+      span.setAttribute("lang", "en"); 
+      span.textContent = part; 
       container.appendChild(span);
-    } else {
-      container.appendChild(document.createTextNode(part));
+    } else { 
+      container.appendChild(document.createTextNode(part)); 
     }
   });
-
   return container.innerHTML;
 }
-
-
-
 function renderPosts(posts) {
-  const contentDiv = document.getElementById("blog-content");
+  const contentDiv = document.getElementById("blog-content"); 
   contentDiv.innerHTML = '';
-  if (!posts.length) {
-    contentDiv.className = "";
-    contentDiv.innerHTML = '<p class="error-message">No posts found matching your search.</p>';
-    return;
+  if (!posts.length) { 
+    contentDiv.className = ""; 
+    contentDiv.innerHTML = '<p class="error-message">No posts found matching your search.</p>'; 
+    return; 
   }
   contentDiv.className = "blog-list";
   posts.forEach(post => {
     const card = document.createElement("div");
     card.className = `blog-card ${post.featured ? "featured" : ""}`;
     const coverImage = post.images ? post.images.find(img => img.position === 1) : null;
-
     const wrappedTitle = wrapTextByLang(post.title);
     const wrappedExcerpt = wrapTextByLang(post.excerpt);
-
-    card.innerHTML = `
-      <h3><a href="blog.html?id=${post.id}">${wrappedTitle}</a></h3>
-      <div class="meta">${post.date} • ${post.readTime}</div>
-      ${coverImage ? `<img class="post-image" src="${coverImage.src}" alt="Cover image for ${post.title}">` : ''}
-      <p>${wrappedExcerpt}</p>
-      <div class="tags">
-        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
-      </div>
-    `;
+    card.innerHTML = `<h3><a href="blog.html?id=${post.id}">${wrappedTitle}</a></h3><div class="meta">${post.date} • ${post.readTime}</div>${coverImage ? `<img class="post-image" src="${coverImage.src}" alt="Cover image for ${post.title}" onerror="this.outerHTML='<p class=\\'error-message\\'>Failed to load image: ${coverImage.src}</p>'">` : ''} <p>${wrappedExcerpt}</p><div class="tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
     contentDiv.appendChild(card);
   });
 }
-
-
 async function loadContent() {
   try {
     const urlParams = new URLSearchParams(window.location.search);
@@ -433,9 +351,7 @@ async function loadContent() {
     if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
     allPosts = await res.json();
     const contentDiv = document.getElementById("blog-content");
-
     if (postId) {
-      // Single post view
       const post = allPosts.find(p => p.id == postId);
       if (post) {
         contentDiv.className = "";
@@ -444,61 +360,77 @@ async function loadContent() {
           <h2>${wrappedTitle}</h2>
           <div class="meta">${post.date} • ${post.readTime}</div>
           <div class="post-content"></div>
-          <div class="tags"></div>
+          <div class="tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
         `;
-
         const postContent = document.querySelector(".post-content");
-
-        // Process content with image placeholders
-        const segments = post.content.split('\n').filter(s => s.trim());
-        let firstText = true;
-        segments.forEach(segment => {
-          if (segment.match(/{img\d+}/)) {
-            const imgIndex = parseInt(segment.match(/\d+/)[0]);
-            const img = post.images ? post.images.find(i => i.position === imgIndex) : null;
-            if (img) {
-              const imgElement = document.createElement("img");
-              imgElement.className = "post-image";
-              imgElement.src = img.src;
-              imgElement.alt = `Image ${imgIndex} for ${post.title}`;
-              postContent.appendChild(imgElement);
-            }
-          } else {
-            const p = document.createElement("p");
-            p.innerHTML = wrapTextByLang(segment);
-            if (firstText && segment.trim()) {
-              p.className = "typed-text";
-              firstText = false;
-            }
-            postContent.appendChild(p);
-          }
-        });
-
-        // Render tags
-        const tagsDiv = document.querySelector(".tags");
-        post.tags.forEach(tag => {
-          const span = document.createElement("span");
-          span.className = "tag";
-          span.textContent = tag;
-          tagsDiv.appendChild(span);
-        });
-      } else {
-        contentDiv.className = "";
-        contentDiv.innerHTML = '<p class="error-message">Sorry, the requested post could not be found.</p>';
+        if (post.file) {
+          console.log(`Fetching post file: static/${post.file}`);
+          fetch(`static/${post.file}`)
+            .then(res => {
+              if (!res.ok) throw new Error(`File not found: ${post.file}`);
+              return res.text();
+            })
+            .then(text => {
+              console.log("Post content:", text);
+              const segments = text.split('\n');
+              let inCodeBlock = false;
+              let codeBuffer = [];
+              segments.forEach(segment => {
+                console.log("Processing segment:", segment);
+                if (segment.startsWith("```")) {
+                  if (inCodeBlock) {
+                    const pre = document.createElement("pre");
+                    const code = document.createElement("code");
+                    code.textContent = codeBuffer.join("\n");
+                    pre.appendChild(code);
+                    postContent.appendChild(pre);
+                    codeBuffer = [];
+                    inCodeBlock = false;
+                  } else {
+                    inCodeBlock = true;
+                  }
+                } else if (inCodeBlock) {
+                  codeBuffer.push(segment);
+                } else {
+                  let wrapped = wrapTextByLang(segment);
+                  let html = wrapped
+                    .replace(/\{img(\d+)\}/g, (match, index) => {
+                      const imgObj = post.images ? post.images.find(img => img.position == index) : null;
+                      console.log(`Replacing {img${index}}:`, imgObj ? imgObj.src : 'No image found');
+                      return imgObj ? `<img class="post-image" src="${imgObj.src}" alt="Image ${index}" onerror="this.outerHTML='<p class=\\'error-message\\'>Failed to load image: ${imgObj.src}</p>';">` : '';
+                    })
+                    .replace(/`([^`]+)`/g, (m, c) => `<code>${c}</code>`);
+                  const p = document.createElement("p");
+                  p.innerHTML = html;
+                  postContent.appendChild(p);
+                }
+              });
+              // Handle remaining code block if file ends without closing ```
+              if (inCodeBlock && codeBuffer.length > 0) {
+                const pre = document.createElement("pre");
+                const code = document.createElement("code");
+                code.textContent = codeBuffer.join("\n");
+                pre.appendChild(code);
+                postContent.appendChild(pre);
+              }
+            })
+            .catch(err => {
+              postContent.innerHTML = `<p class="error-message">Not found! ${post.file}</p>`;
+              console.error(err);
+            });
+        }
       }
     } else {
-      // Blog list view
       contentDiv.className = "blog-list";
       renderPosts(allPosts);
     }
   } catch (err) {
     console.error("Error loading posts.json:", err.message);
     const contentDiv = document.getElementById("blog-content");
-    contentDiv.className = "";
+    contentDiv.className = ""; 
     contentDiv.innerHTML = '<p class="error-message">Failed to load blog posts. Please try again later.</p>';
   }
 }
-
 const searchInput = document.getElementById('search-input');
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.toLowerCase();
@@ -509,7 +441,6 @@ searchInput.addEventListener('input', () => {
   );
   renderPosts(filteredPosts);
 });
-
 loadContent();
 </script>
 </body>
