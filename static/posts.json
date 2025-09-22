@@ -1,15 +1,50 @@
 [
   {
     "id": 1,
-    "title": "XXXXXXXXXXXXXXXXXXXX",
-    "date": "2025-09-21",
-    "readTime": "2 min read",
-    "excerpt": "Pentest",
+    "title": "HTB Machine Voleur - Windows (Medium)",
+    "date": "2025-09-22",
+    "readTime": "10 min read",
+    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "images": [
-      { "src": "static/images/eren.png", "position": 1 },
-      { "src": "static/images/thinkpad-x1.jpg", "position": 2 }
+      { "src": "static/images/htb_machine_voleur/xxxx.png", "position": 2 }
     ],
-    "tags": ["Cybersecurity", "Pentest"],
+    "tags": ["HackTheBox", "Machine", "Windows", "Medium", "Voleur"],
     "file": "blogs/blog_01.txt"
+  },
+  {
+    "id": 2,
+    "title": "HTB Machine Expressway - Linux (Easy)",
+    "date": "2025-09-23",
+    "readTime": "10 min read",
+    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "images": [
+      { "src": "static/images/htb_machine_voleur/xxxx.png", "position": 2 }
+    ],
+    "tags": ["HackTheBox", "Machine", "Linux", "Easy", "Expressway"],
+    "file": "blogs/blog_02.txt"
+  },
+  {
+    "id": 3,
+    "title": "HTB Machine XXXX - XXXX (XXXX)",
+    "date": "2025-09-XX",
+    "readTime": "XX min read",
+    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "images": [
+      { "src": "static/images/htb_machine_xxxx/xxxx.png", "position": 2 }
+    ],
+    "tags": ["HackTheBox", "Machine", "XXXX", "XXXX", "XXXX"],
+    "file": "blogs/blog_02.txt"
+  },
+  {
+    "id": 4,
+    "title": "HTB Machine XXXX - XXXX (XXXX)",
+    "date": "2025-09-XX",
+    "readTime": "XX min read",
+    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "images": [
+      { "src": "static/images/htb_machine_xxxx/xxxx.png", "position": 2 }
+    ],
+    "tags": ["HackTheBox", "Machine", "XXXX", "XXXX", "XXXX"],
+    "file": "blogs/blog_02.txt"
   }
 ]

@@ -1,34 +1,89 @@
 
-เริ่มที่ `Nmap` ก่อนเลย
+สวัสดีครับ! 
+
+เริ่มกันเลยอย่ารอช้า ตอนนี้เรามีข้อมูลที่ระบบให้ดังนี้ `ryan.naylor` / `HollowOct31Nyt` เอาไปสร้างไฟล์เก็บไว้
+File: creds.txt
+```
+ryan.naylor
+HollowOct31Nyt
+```
+
+สแกน `Nmap` พบว่ามี Service ที่น่าสนใจอย่าง `ssh` ที่ Port `2222`
 
 ```
-$ IP=10.10.11.74
+$ IP=10.10.11.76
 ports=$(sudo nmap -Pn -sS -p- -T4 ${IP} | grep -E '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed 's/,$//')
 sudo nmap -p${ports} -sC -sV ${IP}
-Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-22 00:25 +07
-Nmap scan report for 10.10.11.74
-Host is up (0.056s latency).
+[...]
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 03:48 +07
+Nmap scan report for 10.10.11.76
+Host is up (0.078s latency).
 
-PORT   STATE SERVICE VERSION
-22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.13 (Ubuntu Linux; protocol 2.0)
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Simple DNS Plus
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2025-09-22 21:24:08Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: voleur.htb0., Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+2222/tcp  open  ssh           OpenSSH 8.2p1 Ubuntu 4ubuntu0.11 (Ubuntu Linux; protocol 2.0)
 | ssh-hostkey: 
-|   3072 7c:e4:8d:84:c5:de:91:3a:5a:2b:9d:34:ed:d6:99:17 (RSA)
-|   256 83:46:2d:cf:73:6d:28:6f:11:d5:1d:b4:88:20:d6:7c (ECDSA)
-|_  256 e3:18:2e:3b:40:61:b4:59:87:e8:4a:29:24:0f:6a:fc (ED25519)
-80/tcp open  http    nginx 1.18.0 (Ubuntu)
-|_http-title: Did not follow redirect to http://artificial.htb/
-|_http-server-header: nginx/1.18.0 (Ubuntu)
-Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+|   3072 42:40:39:30:d6:fc:44:95:37:e1:9b:88:0b:a2:d7:71 (RSA)
+|   256 ae:d9:c2:b8:7d:65:6f:58:c8:f4:ae:4f:e4:e8:cd:94 (ECDSA)
+|_  256 53:ad:6b:6c:ca:ae:1b:40:44:71:52:95:29:b1:bb:c1 (ED25519)
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: voleur.htb0., Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-title: Not Found
+|_http-server-header: Microsoft-HTTPAPI/2.0
+9389/tcp  open  mc-nmf        .NET Message Framing
+49664/tcp open  msrpc         Microsoft Windows RPC
+49667/tcp open  msrpc         Microsoft Windows RPC
+51702/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+51703/tcp open  msrpc         Microsoft Windows RPC
+51705/tcp open  msrpc         Microsoft Windows RPC
+51733/tcp open  msrpc         Microsoft Windows RPC
+59511/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: DC; OSs: Windows, Linux; CPE: cpe:/o:microsoft:windows, cpe:/o:linux:linux_kernel
+
+Host script results:
+| smb2-time: 
+|   date: 2025-09-22T21:25:08
+|_  start_date: N/A
+| smb2-security-mode: 
+|   3:1:1: 
+|_    Message signing enabled and required
+|_clock-skew: 35m54s
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 10.07 seconds
-```
-
-จาก Nmap พบว่ามี Port `22` และ `80` เปิดอยู่ ต่อไปกำหนดให้เครื่องเรารู้จัก Host `artificial.htb` ที่ IP `10.10.11.74` โดยเพิ่มไปที่ไฟล์ `/etc/hosts`
+Nmap done: 1 IP address (1 host up) scanned in 98.59 seconds
 
 ```
-$ echo "10.10.11.74 artificial.htb" | sudo tee -a /etc/hosts
+
+เดี๋ยวเรามาเริ่ม Enumuration ทีละ Service เลย
+
+
+เริ่มด้วย `ssh` ทดสอบเข้าสู่ระบบก่อนเลย แต่ไม่สำเร็จ เหมือนจะต้องใช้ `publickey` พักไว้ก่อน
+```
+$ ssh -p 2222 ryan.naylor@10.10.11.76
+ryan.naylor@10.10.11.76: Permission denied (publickey).
 ```
 
-UI URL: http://artificial.htb/
-{img2}
+เดี๋ยวเรามากำหนด Host `voleur.htb` ลงใน `/etc/hosts` ก่อน เพื่อให้เครื่องเราสามารถ Resolve ชื่อโดเมนนี้ไปยัง IP เป้าหมายได้ถูก
+
+```
+$ echo "10.10.11.76\tvoleur.htb" | sudo tee -a /etc/hosts
+10.10.11.76     voleur.htb
+```
+
+ต่อไป
+
+
+
+
+
+
+
