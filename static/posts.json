@@ -40,14 +40,14 @@
   },
   {
     "id": 4,
-    "title": "HTB Machine XXXX - XXXX (XXXX)",
+    "title": "HTB Machine Fluffy - Windows (Easy)",
     "date": "2025-09-XX",
     "readTime": "XX min read",
     "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "images": [
       { "src": "static/images/htb_machine_xxxx/xxxx.png", "position": 2 }
     ],
-    "tags": ["HackTheBox", "Machine", "XXXX", "XXXX", "XXXX"],
+    "tags": ["HackTheBox", "Machine", "Windows", "Easy", "Fluffy"],
     "file": "blogs/blog_04.txt"
   }
 ]
