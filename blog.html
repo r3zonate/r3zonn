@@ -11,11 +11,12 @@
 <style>
 :root {
   --bg: #0c1018;
-  --accent: #00ff99;
+  --accent: #00ff99; /* Green for code */
   --accentx: #fff;
-  --secondary: #ff00cc;
+  --secondary: #ff00cc; /* Pinkish-red for code */
   --muted: #a0a8c0;
   --glow: rgba(0, 255, 153, 0.7);
+  --red-code: #ff4040; /* New red color for code */
 }
 html, body {
   margin: 0;
@@ -205,6 +206,14 @@ p code {
   font-family: 'Space Mono', monospace;
   font-size: 0.95em;
 }
+p code.red {
+  background: rgba(255, 64, 64, 0.15);
+  color: var(--red-code);
+}
+strong, b {
+  font-weight: bold;
+  color: var(--accentx); /* White for emphasis, can adjust */
+}
 pre {
   background: rgba(30, 35, 45, 0.95);
   border: 1px solid rgba(0, 255, 153, 0.2);
@@ -228,6 +237,14 @@ pre code {
 .post-content p {
   font-family: 'Athiti', sans-serif;
   /*font-size: 16px;*/
+}
+.post-content strong,
+.post-content b {
+  font-family: 'Athiti', sans-serif; /* Match Thai font */
+}
+.post-content span[lang="en"] strong,
+.post-content span[lang="en"] b {
+  font-family: 'Oxanium', sans-serif; /* Match English font */
 }
 .post-content span[lang="th"] {
   font-family: 'Athiti', sans-serif !important;
@@ -261,6 +278,7 @@ span[lang="th"] {
 span[lang="en"] {
   font-family: 'Oxanium', sans-serif;
 }
+
 </style>
 </head>
 <body>
@@ -306,7 +324,8 @@ window.addEventListener('resize', () => { canvas.width = window.innerWidth; canv
 let allPosts = [];
 function wrapTextByLang(text) {
   const container = document.createElement("span");
-  const parts = text.match(/[\u0E00-\u0E7F]+|[A-Za-z0-9]+|\{img\d+\}|`[^`]+`|[^A-Za-z0-9\u0E00-\u0E7F\{img\d+\}`]+/g) || [];
+  // Updated regex to capture **bold**, <b>text</b>, and code with optional ! for red
+  const parts = text.match(/[\u0E00-\u0E7F]+|[A-Za-z0-9]+|\{img\d+\}|`!([^`]+)`|`([^`]+)`|\*\*([^\*]+)\*\*|<b>([^<]+)<\/b>|[^A-Za-z0-9\u0E00-\u0E7F\{img\d+\}`\*\*<]+/g) || [];
   parts.forEach(part => {
     if (/^[\u0E00-\u0E7F]+$/.test(part)) { 
       const span = document.createElement("span");
@@ -318,31 +337,30 @@ function wrapTextByLang(text) {
       span.setAttribute("lang", "en"); 
       span.textContent = part; 
       container.appendChild(span);
+    } else if (part.match(/^`!([^`]+)`$/)) { // Red code with `!code`
+      const code = document.createElement("code");
+      code.className = "red";
+      code.textContent = part.match(/^`!([^`]+)`$/)[1];
+      container.appendChild(code);
+    } else if (part.match(/^`([^`]+)`$/)) { // Green code
+      const code = document.createElement("code");
+      code.textContent = part.match(/^`([^`]+)`$/)[1];
+      container.appendChild(code);
+    } else if (part.match(/^\*\*([^\*]+)\*\*$/)) { // Markdown bold
+      const strong = document.createElement("strong");
+      strong.textContent = part.match(/^\*\*([^\*]+)\*\*$/)[1];
+      container.appendChild(strong);
+    } else if (part.match(/^<b>([^<]+)<\/b>$/)) { // HTML bold
+      const b = document.createElement("b");
+      b.textContent = part.match(/^<b>([^<]+)<\/b>$/)[1];
+      container.appendChild(b);
     } else { 
       container.appendChild(document.createTextNode(part)); 
     }
   });
   return container.innerHTML;
 }
-function renderPosts(posts) {
-  const contentDiv = document.getElementById("blog-content"); 
-  contentDiv.innerHTML = '';
-  if (!posts.length) { 
-    contentDiv.className = ""; 
-    contentDiv.innerHTML = '<p class="error-message">No posts found matching your search.</p>'; 
-    return; 
-  }
-  contentDiv.className = "blog-list";
-  posts.forEach(post => {
-    const card = document.createElement("div");
-    card.className = `blog-card ${post.featured ? "featured" : ""}`;
-    const coverImage = post.images ? post.images.find(img => img.position === 1) : null;
-    const wrappedTitle = wrapTextByLang(post.title);
-    const wrappedExcerpt = wrapTextByLang(post.excerpt);
-    card.innerHTML = `<h3><a href="blog.html?id=${post.id}">${wrappedTitle}</a></h3><div class="meta">${post.date} • ${post.readTime}</div>${coverImage ? `<img class="post-image" src="${coverImage.src}" alt="Cover image for ${post.title}" onerror="this.outerHTML='<p class=\\'error-message\\'>Failed to load image: ${coverImage.src}</p>'">` : ''} <p>${wrappedExcerpt}</p><div class="tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
-    contentDiv.appendChild(card);
-  });
-}
+
 async function loadContent() {
   try {
     const urlParams = new URLSearchParams(window.location.search);
@@ -398,14 +416,12 @@ async function loadContent() {
                       const imgObj = post.images ? post.images.find(img => img.position == index) : null;
                       console.log(`Replacing {img${index}}:`, imgObj ? imgObj.src : 'No image found');
                       return imgObj ? `<img class="post-image" src="${imgObj.src}" alt="Image ${index}" onerror="this.outerHTML='<p class=\\'error-message\\'>Failed to load image: ${imgObj.src}</p>';">` : '';
-                    })
-                    .replace(/`([^`]+)`/g, (m, c) => `<code>${c}</code>`);
+                    });
                   const p = document.createElement("p");
                   p.innerHTML = html;
                   postContent.appendChild(p);
                 }
               });
-              // Handle remaining code block if file ends without closing ```
               if (inCodeBlock && codeBuffer.length > 0) {
                 const pre = document.createElement("pre");
                 const code = document.createElement("code");
@@ -431,6 +447,26 @@ async function loadContent() {
     contentDiv.innerHTML = '<p class="error-message">Failed to load blog posts. Please try again later.</p>';
   }
 }
+function renderPosts(posts) {
+  const contentDiv = document.getElementById("blog-content"); 
+  contentDiv.innerHTML = '';
+  if (!posts.length) { 
+    contentDiv.className = ""; 
+    contentDiv.innerHTML = '<p class="error-message">No posts found matching your search.</p>'; 
+    return; 
+  }
+  contentDiv.className = "blog-list";
+  posts.forEach(post => {
+    const card = document.createElement("div");
+    card.className = `blog-card ${post.featured ? "featured" : ""}`;
+    const coverImage = post.images ? post.images.find(img => img.position === 1) : null;
+    const wrappedTitle = wrapTextByLang(post.title);
+    const wrappedExcerpt = wrapTextByLang(post.excerpt);
+    card.innerHTML = `<h3><a href="blog.html?id=${post.id}">${wrappedTitle}</a></h3><div class="meta">${post.date} • ${post.readTime}</div>${coverImage ? `<img class="post-image" src="${coverImage.src}" alt="Cover image for ${post.title}" onerror="this.outerHTML='<p class=\\'error-message\\'>Failed to load image: ${coverImage.src}</p>'">` : ''} <p>${wrappedExcerpt}</p><div class="tags">${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
+    contentDiv.appendChild(card);
+  });
+}
+
 const searchInput = document.getElementById('search-input');
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.toLowerCase();
