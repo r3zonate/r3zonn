@@ -177,7 +177,7 @@ ike@expressway:~$ cat user.txt
 
 Next, to `escalate privileges`, I checked for `sudo` `permissions` and `version`. 
 
-The sudo version `1.9.17` was vulnerable to `CVE-2021-3156`, a known privilege escalation vulnerability.
+The sudo version `r!1.9.17` was vulnerable to `CVE-2021-3156`, a known privilege escalation vulnerability.
 
 ```
 ike@expressway:/tmp/.r3z$ sudo -l
