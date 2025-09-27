@@ -25,7 +25,8 @@ html, body {
   width: 100%;
   background: var(--bg);
   font-family: 'Space Mono', monospace;
-  color: var(--muted);
+  /*color: var(--muted);*/
+  color: var(--accentx);
   overflow-x: hidden;
 }
 body {
@@ -198,9 +199,10 @@ h2 {
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
 .tag { background: rgba(0, 255, 153, 0.2); padding: 4px 10px; border-radius: 4px; font-size: 13px; color: var(--accent); font-family: 'Chakra Petch', sans-serif; }
 .error-message { color: var(--secondary); font-size: 16px; text-align: center; padding: 20px; }
+/* เพิ่ม CSS สำหรับโค้ดสีต่าง ๆ */
 p code {
-  background: rgba(0, 255, 153, 0.15);
-  color: var(--accent);
+  background: rgba(128,128,128,0.15); /* Gray background */
+  color: var(--muted);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Space Mono', monospace;
@@ -208,7 +210,11 @@ p code {
 }
 p code.red {
   background: rgba(255, 64, 64, 0.15);
-  color: var(--red-code);
+  color: var(--red-code); /* Red text */
+}
+p code.green {
+  background: rgba(0, 255, 153, 0.15);
+  color: var(--accent); /* Green text */
 }
 strong, b {
   font-weight: bold;
@@ -326,6 +332,7 @@ function wrapTextByLang(text) {
   const container = document.createElement("span");
   // Updated regex to capture **bold**, <b>text</b>, and code with optional ! for red
   const parts = text.match(/[\u0E00-\u0E7F]+|[A-Za-z0-9]+|\{img\d+\}|`!([^`]+)`|`([^`]+)`|\*\*([^\*]+)\*\*|<b>([^<]+)<\/b>|[^A-Za-z0-9\u0E00-\u0E7F\{img\d+\}`\*\*<]+/g) || [];
+  // ใน wrapTextByLang ให้เพิ่ม regex สำหรับ r! และ g!
   parts.forEach(part => {
     if (/^[\u0E00-\u0E7F]+$/.test(part)) { 
       const span = document.createElement("span");
@@ -337,12 +344,17 @@ function wrapTextByLang(text) {
       span.setAttribute("lang", "en"); 
       span.textContent = part; 
       container.appendChild(span);
-    } else if (part.match(/^`!([^`]+)`$/)) { // Red code with `!code`
+    } else if (part.match(/^`r!([^`]+)`$/)) { // Red code
       const code = document.createElement("code");
       code.className = "red";
-      code.textContent = part.match(/^`!([^`]+)`$/)[1];
+      code.textContent = part.match(/^`r!([^`]+)`$/)[1];
       container.appendChild(code);
-    } else if (part.match(/^`([^`]+)`$/)) { // Green code
+    } else if (part.match(/^`g!([^`]+)`$/)) { // Green code
+      const code = document.createElement("code");
+      code.className = "green";
+      code.textContent = part.match(/^`g!([^`]+)`$/)[1];
+      container.appendChild(code);
+    } else if (part.match(/^`([^`]+)`$/)) { // Default gray code
       const code = document.createElement("code");
       code.textContent = part.match(/^`([^`]+)`$/)[1];
       container.appendChild(code);
@@ -358,6 +370,7 @@ function wrapTextByLang(text) {
       container.appendChild(document.createTextNode(part)); 
     }
   });
+
   return container.innerHTML;
 }
 
