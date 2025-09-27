@@ -8,7 +8,7 @@ The vulnerability affects Next.js versions `r!11.1.4` through `r!13.5.6`, `r!14.
 <b>How to exploit:</b>
 `r!Do not run against systems you don't own/authorize!`
 
-To exploit the vulnerability, add the `r!x-middleware-subrequest: middleware` header to the HTTP request to bypass Next.js middleware authentication checks.
+To exploit the vulnerability, add the `x-middleware-subrequest: middleware` header to the HTTP request to bypass Next.js middleware authentication checks.
 
 <b>Example:</b>
 HTTP Request:
