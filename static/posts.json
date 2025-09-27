@@ -1,14 +1,14 @@
 [
   {
     "id": 1,
-    "title": "HTB Machine Voleur - Windows (Medium)",
-    "date": "2025-09-22",
+    "title": "X",
+    "date": "2025-XX-XX",
     "readTime": "10 min read",
-    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "excerpt": "",
     "images": [
       { "src": "static/images/htb_machine_voleur/xxxx.png", "position": 2 }
     ],
-    "tags": ["HackTheBox", "Machine", "Windows", "Medium", "Voleur"],
+    "tags": [],
     "file": "blogs/blog_01.txt"
   },
   {
@@ -28,26 +28,26 @@
   },
   {
     "id": 3,
-    "title": "HTB Machine CodePartTwo - Linux (Easy)",
-    "date": "2025-09-25",
+    "title": "X",
+    "date": "2025-XX-XX",
     "readTime": "9 min read",
-    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "excerpt": "",
     "images": [
       { "src": "static/images/htb_machine_xxxx/xxxx.png", "position": 2 }
     ],
-    "tags": ["HackTheBox", "Machine", "Linux", "Easy", "CodePartTwo"],
+    "tags": [],
     "file": "blogs/blog_03.txt"
   },
   {
     "id": 4,
-    "title": "HTB Machine Fluffy - Windows (Easy)",
-    "date": "2025-09-XX",
+    "title": "X",
+    "date": "2025-XX-XX",
     "readTime": "XX min read",
-    "excerpt": "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "excerpt": "",
     "images": [
       { "src": "static/images/htb_machine_xxxx/xxxx.png", "position": 2 }
     ],
-    "tags": ["HackTheBox", "Machine", "Windows", "Easy", "Fluffy"],
+    "tags": [],
     "file": "blogs/blog_04.txt"
   }
 ]
