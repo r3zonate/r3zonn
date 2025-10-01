@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>r3zon</title>
-<!-- <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Chakra+Petch:wght@700&display=stylesheet" rel="stylesheet"> -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Athiti:wght@200;300;400;500;600;700&family=Oxanium:wght@200..800&display=swap" rel="stylesheet">
@@ -22,6 +21,7 @@ html, body {
   height: 100vh;
   width: 100%;
   background: var(--bg);
+  /*font-family: 'Oxanium', sans-serif;*/
   font-family: 'Space Mono', monospace;
   color: var(--muted);
   overflow: hidden;
@@ -49,6 +49,7 @@ nav a {
   margin: 0 20px;
   text-decoration: none;
   font-weight: bold;
+  /*font-family: 'Oxanium', sans-serif;*/
   font-family: 'Space Mono', monospace;
   font-size: 18px;
   transition: color 0.3s, transform 0.3s;
@@ -74,7 +75,7 @@ nav a:hover {
   width: 90%;
   max-width: 800px;
   color: var(--accent);
-  font-family: 'Space Mono', monospace;
+  font-family: 'Oxanium', sans-serif;
   font-size: 32px;
   text-shadow: 0 0 10px var(--glow);
   animation: slideIn 0.8s ease-out;
@@ -84,7 +85,7 @@ nav a:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 70px - 10px - 70px); /* Header height (~50px) + countdown bottom margin (10px) + countdown top margin (70px) */
+  height: calc(100vh - 70px - 10px - 70px);
   padding: 20px;
 }
 .terminal-box {
@@ -132,7 +133,7 @@ nav a:hover {
   outline: none;
   background: transparent;
   color: var(--accent);
-  font-family: 'Space Mono', monospace;
+  font-family: 'Oxanium', sans-serif;
   font-size: 14px;
 }
 .cmd-input::placeholder {
@@ -143,7 +144,7 @@ nav a:hover {
   color: var(--secondary);
   text-align: center;
   margin-top: 25px;
-  font-family: 'Chakra Petch', sans-serif;
+  font-family: 'Athiti', sans-serif;
 }
 .typed-text {
   font-size: 15px;
@@ -165,7 +166,6 @@ nav a:hover {
 @media (max-width: 768px) {
   .terminal-box {
     width: 80%;
-
     padding: 20px;
   }
   .countdown {
@@ -175,7 +175,7 @@ nav a:hover {
   .hub-container {
     padding: 10px;
     margin-top: 0;
-    height: auto;        
+    height: auto;
     min-height: calc(100vh - 120px);
     display: flex;
     flex-direction: column;
@@ -190,16 +190,12 @@ nav a:hover {
     font-size: 16px;
   }
 }
-html, body {
-  font-family: 'Oxanium', sans-serif;
-}
 span[lang="th"] {
   font-family: 'Athiti', sans-serif;
 }
 span[lang="en"] {
   font-family: 'Oxanium', sans-serif;
 }
-
 </style>
 </head>
 <body>
@@ -268,7 +264,6 @@ function updateCountdown() {
   let daysLeft;
   
   if (now < startDate) {
-    // Before service starts
     const diff = startDate - now;
     const totalSeconds = Math.floor(diff / 1000);
     const years = Math.floor(totalSeconds / (365 * 24 * 60 * 60));
@@ -278,9 +273,8 @@ function updateCountdown() {
     const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
     const seconds = totalSeconds % 60;
     document.getElementById('countdown').innerHTML = `${years}Y ${months}M ${days}D ${hours}H ${minutes}m ${seconds}s<br>until service starts`;
-    daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24)); // Ceiling for days until start
+    daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
   } else if (now <= endDate) {
-    // During service
     const diff = endDate - now;
     const totalSeconds = Math.floor(diff / 1000);
     const years = Math.floor(totalSeconds / (365 * 24 * 60 * 60));
@@ -290,9 +284,8 @@ function updateCountdown() {
     const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
     const seconds = totalSeconds % 60;
     document.getElementById('countdown').textContent = `${years}Y ${months}M ${days}D ${hours}H ${minutes}m ${seconds}s<br>until return`;
-    daysLeft = Math.floor(totalSeconds / (24 * 60 * 60)); // Floor for days until end
+    daysLeft = Math.floor(totalSeconds / (24 * 60 * 60));
   } else {
-    // After service
     document.getElementById('countdown').textContent = 'Service complete!';
     daysLeft = 0;
   }
@@ -304,6 +297,7 @@ let countdownDays = updateCountdown();
 const screen = document.getElementById('screen');
 const cmd = document.getElementById('cmd');
 let history = [], pos = -1;
+let dataLoaded = false;
 
 function out(t) {
   const div = document.createElement('div');
@@ -314,13 +308,73 @@ function out(t) {
 }
 function clearScr() { screen.innerHTML = ''; }
 
-const DATA = {
-  profile: "Loading...",
+// Initialize DATA with fallback values
+let DATA = {
+  name: "r3zon",
+  profile: "Loading profile data...",
   experience: "2025 Nov - Present: Pvt.\n2024 May - 2025 Oct: Penetration Tester",
   ctf: "",
   bugbounty: "",
   cve: "",
-  certs: "CRTA (2025 Mar), CWES (2025 Jan)"
+  certs: "CRTA (2025 Mar), CWES (2025 Jan)",
+  profiles: ""
+};
+
+// Function to initialize terminal after data load
+function initTerminal() {
+  clearScr();
+  out("$ whoami");
+  out(DATA.name);
+  out("Type 'help' to see commands");
+  dataLoaded = true;
+}
+
+// Function to fetch and process data
+function fetchData() {
+  console.log('Attempting to fetch static/data.json...');
+  fetch('static/data.json')
+    .then(response => {
+      console.log('Fetch response status:', response.status);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Fetched data:', data);
+      DATA = {
+        name: data.name || DATA.name,
+        profile: data.intro || DATA.profile,
+        experience: Array.isArray(data.experience) ? data.experience.join('\n') : (data.experience || DATA.experience),
+        ctf: Array.isArray(data.activities) ? data.activities.join('\n') : (data.activities || DATA.ctf),
+        bugbounty: data.bugbounty || DATA.bugbounty,
+        cve: data.cve || DATA.cve,
+        certs: Array.isArray(data.certifications) ? data.certifications.join('\n') : (data.certifications || DATA.certs),
+        profiles: Array.isArray(data.profiles) ? data.profiles.map(p => `${p.platform}: ${p.url}`).join('\n') : (data.profiles || DATA.profiles)
+      };
+      console.log('Updated DATA:', DATA);
+      initTerminal();
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+      out("Initializing with default data...");
+      out(`Error loading static/data.json: ${error.message}`);
+      out("Try running 'reload' to retry, or check console for details.");
+      out("Using fallback data for now.");
+      initTerminal();
+    });
+}
+
+// Initial fetch
+out("Booting up...");
+out("Loading profile data...");
+fetchData();
+
+// Expose reload function
+window.retryFetchData = function() {
+  if (!dataLoaded) return out("Data not ready yet.");
+  out("Reloading data...");
+  fetchData();
 };
 
 const SECRET_COMMANDS = {
@@ -339,21 +393,21 @@ const SECRET_COMMANDS = {
   'hungry': () => out("Always hungry, always eating."),
   'tired': () => out("Soldier mode: ON."),
   'motivation': () => out("Pain is temporary, pride is forever."),
-  'friend': () => out("You’re never forgotten."),
+  'friend': () => out("You're never forgotten."),
   'dream': () => out("Still dreaming of freedom."),
   'mission': () => out("Survive and return."),
   'smile': () => out("Smiling through it."),
   'love': () => out("Love never expires."),
   'future': () => out("Better days loading..."),
-  'timeout': () => out("Resting, don’t worry."),
-  'return': () => out("I’ll be back."),
+  'timeout': () => out("Resting, don't worry."),
+  'return': () => out("I'll be back."),
   'ping': () => out("Pong! Still connected."),
   'safe': () => out("Yes, safe and sound."),
   'hello': () => out("Reporting for duty!"),
   '404': () => out("Freedom not found."),
   'sudo': () => out("Permission granted: survive."),
   'install': () => out("Installing patience… 99.9%."),
-  'uninstall': () => out("Can’t uninstall friendship."),
+  'uninstall': () => out("Can't uninstall friendship."),
   'readme': () => out("Just miss me sometimes."),
   'whoami': () => out("Just your friend in uniform."),
   'id': () => out("Soldier #1 (in your heart)."),
@@ -368,26 +422,28 @@ const SECRET_COMMANDS = {
       out(`Freedom unlocked in ${countdownDays} days.`);
     }
   },
-  'easteregg': () => out("Secret message: I’m fine."),
+  'easteregg': () => out("Secret message: I'm fine."),
   'cheatcode': () => out("↑↑↓↓←→←→BA = miss you."),
   'midnight': () => out("Sleepless but surviving."),
   'star': () => out("Guiding light found. It's you hahaha.."),
-  'galaxy': () => out("You’re my universe."),
+  'galaxy': () => out("You're my universe."),
   'connection': () => out("Stable, even across distance."),
   'wru': () => out("I'm always here!"),
   'endgame': () => out("Return home: mission complete.")
 };
 
 const CMD = {
-  help: () => out("Commands: whoami, profile, experience, ctf, bugbounty, cve, certs, clear, secret [-h]"),
-  whoami: () => out("r3zon"),
+  help: () => out("Commands: whoami, profile, experience, ctf, bugbounty, cve, certs, profiles, clear, reload, secret [-h]"),
+  whoami: () => out(DATA.name),
   profile: () => out(DATA.profile),
   experience: () => out(DATA.experience),
   ctf: () => out(DATA.ctf),
   bugbounty: () => out(DATA.bugbounty),
   cve: () => out(DATA.cve),
   certs: () => out(DATA.certs),
+  profiles: () => out(DATA.profiles || "No profiles available"),
   clear: () => clearScr(),
+  reload: () => window.retryFetchData(),
   secret: (args) => {
     if (!args || args === '-h') {
       SECRET_COMMANDS['-h']();
@@ -425,10 +481,6 @@ cmd.addEventListener("keydown", e => {
     cmd.value = history[pos] || "";
   }
 });
-
-out("$ whoami");
-out("r3zon");
-out("Type 'help' to see commands");
 </script>
 </body>
 </html>
