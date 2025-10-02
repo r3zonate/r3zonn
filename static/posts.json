@@ -1,21 +1,9 @@
 [
   {
-    "id": 1,
-    "title": "X",
-    "date": "2025-XX-XX",
-    "readTime": "10 min read",
-    "excerpt": "",
-    "images": [
-      { "src": "static/images/htb_machine_voleur/xxxx.png", "position": 2 }
-    ],
-    "tags": [],
-    "file": "blogs/blog_01.txt"
-  },
-  {
     "id": 2,
     "title": "HTB Machine Expressway - Linux (Easy)",
     "date": "2025-09-24",
-    "readTime": "7 min read",
+    "readTime": "9 min read",
     "excerpt": "udp and sudo (CVE)",
     "images": [
       { "src": "static/images/htb_machine_expressway/expressway_01.png", "position": 1 },
@@ -25,27 +13,5 @@
     ],
     "tags": ["HackTheBox", "Machine", "Linux", "Easy", "Expressway"],
     "file": "blogs/blog_02.txt"
-  },
-  {
-    "id": 3,
-    "title": "CVE-2025-29927 - Next.js Middleware Authorization Bypass",
-    "date": "2025-09-28",
-    "readTime": "3 min read",
-    "excerpt": "CVE‑2025‑29927 is a critical authorization‑bypass in Next.js middleware.",
-    "images": [],
-    "tags": ["CVE", "CVE-2025-29927", "Next.js", "Bypass"],
-    "file": "blogs/blog_03.txt"
-  },
-  {
-    "id": 4,
-    "title": "X",
-    "date": "2025-XX-XX",
-    "readTime": "XX min read",
-    "excerpt": "",
-    "images": [
-      { "src": "static/images/htb_machine_xxxx/xxxx.png", "position": 2 }
-    ],
-    "tags": [],
-    "file": "blogs/blog_04.txt"
   }
 ]
